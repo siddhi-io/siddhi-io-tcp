@@ -74,7 +74,8 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.extension.siddhi.io.tcp.*
+                            org.wso2.extension.siddhi.io.tcp.source.*,
+                            org.wso2.extension.siddhi.io.tcp.sink.*
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional
