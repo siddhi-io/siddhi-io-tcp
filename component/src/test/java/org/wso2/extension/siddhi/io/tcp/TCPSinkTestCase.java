@@ -19,10 +19,9 @@
 package org.wso2.extension.siddhi.io.tcp;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyServer;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
@@ -37,6 +36,7 @@ import org.wso2.siddhi.query.api.exception.SiddhiAppValidationException;
 
 import java.util.ArrayList;
 
+
 /**
  * TCP sink test case.
  */
@@ -46,7 +46,7 @@ public class TCPSinkTestCase {
     private volatile int count1;
     private volatile boolean eventArrived;
 
-    @Before
+    @BeforeMethod
     public void init() {
         count = 0;
         count1 = 0;
@@ -89,16 +89,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -127,15 +127,15 @@ public class TCPSinkTestCase {
 
         tcpNettyServer.shutdownGracefully();
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
 
 
     }
 
-    @Test(expected = SiddhiAppValidationException.class)
+    @Test(expectedExceptions = SiddhiAppValidationException.class, dependsOnMethods = {"testTcpSink1"})
     public void testTcpSink2() throws InterruptedException {
-        LOG.info("tcpSource TestCase 2");
+        LOG.info("tcpSink TestCase 2");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -153,9 +153,9 @@ public class TCPSinkTestCase {
         siddhiAppRuntime.shutdown();
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink2"})
     public void testTcpSink3() throws InterruptedException {
-        LOG.info("tcpSource TestCase 3");
+        LOG.info("tcpSink TestCase 3");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -188,16 +188,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -225,17 +225,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink3"})
     public void testTcpSink4() throws InterruptedException {
-        LOG.info("tcpSource TestCase 4");
+        LOG.info("tcpSink TestCase 4");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -268,16 +268,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -305,17 +305,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink4"})
     public void testTcpSink5() throws InterruptedException {
-        LOG.info("tcpSource TestCase 5");
+        LOG.info("tcpSink TestCase 5");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -348,16 +348,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -385,17 +385,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Test(expected = SiddhiAppCreationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class, dependsOnMethods = {"testTcpSink5"})
     public void testTcpSink6() throws InterruptedException {
-        LOG.info("tcpSource TestCase 6");
+        LOG.info("tcpSink TestCase 6");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -419,9 +419,9 @@ public class TCPSinkTestCase {
         }
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink6"})
     public void testTcpSink7() throws InterruptedException {
-        LOG.info("tcpSource TestCase 7");
+        LOG.info("tcpSink TestCase 7");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -454,16 +454,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -488,17 +488,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink7"})
     public void testTcpSink8() throws InterruptedException {
-        LOG.info("tcpSource TestCase 8");
+        LOG.info("tcpSink TestCase 8");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -531,13 +531,13 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("foo", event.getData(0));
+                        AssertJUnit.assertEquals("foo", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("foo", event.getData(0));
+                        AssertJUnit.assertEquals("foo", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -565,17 +565,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertEquals(2, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(2, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink8"})
     public void testTcpSink9() throws InterruptedException {
-        LOG.info("tcpSource TestCase 9");
+        LOG.info("tcpSink TestCase 9");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -628,18 +628,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertFalse(eventArrived);
+        AssertJUnit.assertFalse(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Ignore
-    @Test
     //todo validate LOG
+    @Test(enabled = false, dependsOnMethods = {"testTcpSink9"})
     public void testTcpSink10() throws InterruptedException {
-        LOG.info("tcpSource TestCase 10");
+        LOG.info("tcpSink TestCase 10");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -664,14 +663,14 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertFalse(eventArrived);
+        AssertJUnit.assertFalse(eventArrived);
         siddhiAppRuntime.shutdown();
 
     }
 
-    @Test(expected = SiddhiAppCreationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class, dependsOnMethods = {"testTcpSink9"})
     public void testTcpSink11() throws InterruptedException {
-        LOG.info("tcpSource TestCase 11");
+        LOG.info("tcpSink TestCase 11");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -695,9 +694,9 @@ public class TCPSinkTestCase {
         }
     }
 
-    @Test(expected = SiddhiAppCreationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class, dependsOnMethods = {"testTcpSink11"})
     public void testTcpSink12() throws InterruptedException {
-        LOG.info("tcpSource TestCase 12");
+        LOG.info("tcpSink TestCase 12");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -721,9 +720,9 @@ public class TCPSinkTestCase {
         }
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink12"})
     public void testTcpSink13() throws InterruptedException {
-        LOG.info("tcpSource TestCase 13");
+        LOG.info("tcpSink TestCase 13");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -766,25 +765,25 @@ public class TCPSinkTestCase {
                 commenting this out since we cannot guarantee an event order here
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     case 4:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 5:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 6:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
 
                 }*/
             }
@@ -810,17 +809,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(3000);
 
-        Assert.assertEquals(6, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(6, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer.shutdownGracefully();
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink13"})
     public void testTcpSink14() throws InterruptedException {
-        LOG.info("tcpSource TestCase 14");
+        LOG.info("tcpSink TestCase 14");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -862,16 +861,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -896,16 +895,16 @@ public class TCPSinkTestCase {
                 count1++;
                 switch (count1) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -932,9 +931,9 @@ public class TCPSinkTestCase {
 
         Thread.sleep(3000);
 
-        Assert.assertEquals(3, count);
-        Assert.assertEquals(3, count1);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertEquals(3, count1);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer1.shutdownGracefully();
@@ -942,9 +941,9 @@ public class TCPSinkTestCase {
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink14"})
     public void testTcpSink15() throws InterruptedException {
-        LOG.info("tcpSource TestCase 15");
+        LOG.info("tcpSink TestCase 15");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -982,16 +981,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -1016,17 +1015,17 @@ public class TCPSinkTestCase {
 
         Thread.sleep(3000);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
         tcpNettyServer1.shutdownGracefully();
 
     }
 
-    @Test
+    @Test(dependsOnMethods = {"testTcpSink15"})
     public void testTcpSink16() throws InterruptedException {
-        LOG.info("tcpSource TestCase 16");
+        LOG.info("tcpSink TestCase 16");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
@@ -1059,16 +1058,16 @@ public class TCPSinkTestCase {
                 count++;
                 switch (count) {
                     case 1:
-                        Assert.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getData(0));
                         break;
                     case 2:
-                        Assert.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getData(0));
                         break;
                     case 3:
-                        Assert.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getData(0));
                         break;
                     default:
-                        org.junit.Assert.fail();
+                        AssertJUnit.fail();
                 }
             }
 
@@ -1095,8 +1094,8 @@ public class TCPSinkTestCase {
 
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
         tcpNettyServer.shutdownGracefully();
 
