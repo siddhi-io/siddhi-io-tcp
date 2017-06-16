@@ -19,10 +19,9 @@
 package org.wso2.extension.siddhi.io.tcp;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
@@ -40,12 +39,13 @@ import java.util.List;
 /**
  * TCP source test case.
  */
+
 public class TCPSourceTestCase {
     static final Logger LOG = Logger.getLogger(TCPSourceTestCase.class);
     private volatile int count;
     private volatile boolean eventArrived;
 
-    @Before
+    @BeforeMethod
     public void init() {
         count = 0;
         eventArrived = false;
@@ -77,16 +77,16 @@ public class TCPSourceTestCase {
                     count++;
                     switch (count) {
                         case 1:
-                            Assert.assertEquals("test", event.getData(0));
+                            AssertJUnit.assertEquals("test", event.getData(0));
                             break;
                         case 2:
-                            Assert.assertEquals("test1", event.getData(0));
+                            AssertJUnit.assertEquals("test1", event.getData(0));
                             break;
                         case 3:
-                            Assert.assertEquals("test2", event.getData(0));
+                            AssertJUnit.assertEquals("test2", event.getData(0));
                             break;
                         default:
-                            org.junit.Assert.fail();
+                            AssertJUnit.fail();
                     }
                 }
             }
@@ -107,8 +107,8 @@ public class TCPSourceTestCase {
         tcpNettyClient.shutdown();
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
     }
@@ -139,16 +139,16 @@ public class TCPSourceTestCase {
                     count++;
                     switch (count) {
                         case 1:
-                            Assert.assertEquals("test", event.getData(0));
+                            AssertJUnit.assertEquals("test", event.getData(0));
                             break;
                         case 2:
-                            Assert.assertEquals("test1", event.getData(0));
+                            AssertJUnit.assertEquals("test1", event.getData(0));
                             break;
                         case 3:
-                            Assert.assertEquals("test2", event.getData(0));
+                            AssertJUnit.assertEquals("test2", event.getData(0));
                             break;
                         default:
-                            org.junit.Assert.fail();
+                            AssertJUnit.fail();
                     }
                 }
             }
@@ -169,8 +169,8 @@ public class TCPSourceTestCase {
         tcpNettyClient.shutdown();
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
     }
@@ -214,7 +214,7 @@ public class TCPSourceTestCase {
         tcpNettyClient.shutdown();
         Thread.sleep(300);
 
-        Assert.assertFalse(eventArrived);
+        AssertJUnit.assertFalse(eventArrived);
         siddhiAppRuntime.shutdown();
     }
 
@@ -238,7 +238,7 @@ public class TCPSourceTestCase {
             siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition + query);
             siddhiAppRuntime.start();
         } catch (SiddhiAppCreationException e) {
-            Assert.assertNotNull(e);
+            AssertJUnit.assertNotNull(e);
         } finally {
             if (siddhiAppRuntime != null) {
                 siddhiAppRuntime.shutdown();
@@ -271,16 +271,16 @@ public class TCPSourceTestCase {
                     count++;
                     switch (count) {
                         case 1:
-                            Assert.assertEquals("test", event.getData(0));
+                            AssertJUnit.assertEquals("test", event.getData(0));
                             break;
                         case 2:
-                            Assert.assertEquals("test1", event.getData(0));
+                            AssertJUnit.assertEquals("test1", event.getData(0));
                             break;
                         case 3:
-                            Assert.assertEquals("test2", event.getData(0));
+                            AssertJUnit.assertEquals("test2", event.getData(0));
                             break;
                         default:
-                            org.junit.Assert.fail();
+                            AssertJUnit.fail();
                     }
                 }
             }
@@ -301,13 +301,13 @@ public class TCPSourceTestCase {
         tcpNettyClient.shutdown();
         Thread.sleep(300);
 
-        Assert.assertEquals(3, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
     }
 
-    @Test(expected = SiddhiAppCreationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class)
     public void testTcpSource6() throws InterruptedException {
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {
@@ -365,25 +365,25 @@ public class TCPSourceTestCase {
                     count++;
                     switch (count) {
                         case 1:
-                            Assert.assertEquals("test", event.getData(0));
+                            AssertJUnit.assertEquals("test", event.getData(0));
                             break;
                         case 2:
-                            Assert.assertEquals("test1", event.getData(0));
+                            AssertJUnit.assertEquals("test1", event.getData(0));
                             break;
                         case 3:
-                            Assert.assertEquals("test2", event.getData(0));
+                            AssertJUnit.assertEquals("test2", event.getData(0));
                             break;
                         case 4:
-                            Assert.assertEquals("test", event.getData(0));
+                            AssertJUnit.assertEquals("test", event.getData(0));
                             break;
                         case 5:
-                            Assert.assertEquals("test1", event.getData(0));
+                            AssertJUnit.assertEquals("test1", event.getData(0));
                             break;
                         case 6:
-                            Assert.assertEquals("test2", event.getData(0));
+                            AssertJUnit.assertEquals("test2", event.getData(0));
                             break;
                         default:
-                            org.junit.Assert.fail();
+                            AssertJUnit.fail();
                     }
                 }
             }
@@ -406,14 +406,13 @@ public class TCPSourceTestCase {
         tcpNettyClient.shutdown();
         Thread.sleep(300);
 
-        Assert.assertEquals(6, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(6, count);
+        AssertJUnit.assertTrue(eventArrived);
         siddhiAppRuntime.shutdown();
 
     }
 
-    @Ignore
-    @Test//(expected = SiddhiAppCreationException.class)
+    @Test(enabled = false)//(expected = SiddhiAppCreationException.class)
     public void testTcpSource8() throws InterruptedException {
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {
@@ -439,8 +438,7 @@ public class TCPSourceTestCase {
         }
     }
 
-    @Ignore
-    @Test
+    @Test(enabled = false)
     public void testTcpSourcePauseAndResume() throws InterruptedException {
         init();
         LOG.info("tcpSource TestCase PauseAndResume");
@@ -466,13 +464,13 @@ public class TCPSourceTestCase {
                     count++;
                     switch (count) {
                         case 1:
-                            Assert.assertEquals("test", event.getData(0));
+                            AssertJUnit.assertEquals("test", event.getData(0));
                             break;
                         case 2:
-                            Assert.assertEquals("test1", event.getData(0));
+                            AssertJUnit.assertEquals("test1", event.getData(0));
                             break;
                         case 3:
-                            Assert.assertEquals("test2", event.getData(0));
+                            AssertJUnit.assertEquals("test2", event.getData(0));
                             break;
                         default:
                     }
@@ -501,8 +499,8 @@ public class TCPSourceTestCase {
 
 
         Thread.sleep(1000);
-        Assert.assertTrue(eventArrived);
-        Assert.assertEquals(4, count);
+        AssertJUnit.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(4, count);
         count = 0;
         eventArrived = false;
 
@@ -518,7 +516,7 @@ public class TCPSourceTestCase {
         tcpNettyClient2.send("inputStream", arrayList2.toArray(new Event[1]));
 
         Thread.sleep(1000);
-        Assert.assertFalse(eventArrived);
+        AssertJUnit.assertFalse(eventArrived);
 
         // resume
         sources.forEach(e -> e.forEach(Source::resume));
@@ -529,8 +527,8 @@ public class TCPSourceTestCase {
         tcpNettyClient.send("inputStream", arrayList.toArray(new Event[2]));
         Thread.sleep(1000);
         // once resumed, we should be able to access the data sent while the transport is paused
-        Assert.assertEquals(5, count);
-        Assert.assertTrue(eventArrived);
+        AssertJUnit.assertEquals(5, count);
+        AssertJUnit.assertTrue(eventArrived);
 
         count = 0;
 
@@ -541,7 +539,7 @@ public class TCPSourceTestCase {
         tcpNettyClient.send("inputStream", arrayList.toArray(new Event[2]));
 
         Thread.sleep(1000);
-        Assert.assertEquals(2, count);
+        AssertJUnit.assertEquals(2, count);
 
         tcpNettyClient.disconnect();
         tcpNettyClient2.disconnect();
