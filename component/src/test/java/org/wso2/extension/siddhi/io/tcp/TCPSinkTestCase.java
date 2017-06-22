@@ -108,6 +108,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         tcpNettyServer.bootServer(new ServerConfig());
@@ -207,6 +212,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         ServerConfig serverConfig = new ServerConfig();
@@ -287,6 +297,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         ServerConfig serverConfig = new ServerConfig();
@@ -366,6 +381,11 @@ public class TCPSinkTestCase {
                 for (Event event : events) {
                     onEvent(event);
                 }
+            }
+
+            @Override
+            public void onEvent(byte[] events) {
+
             }
         });
 
@@ -473,6 +493,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         tcpNettyServer.bootServer(new ServerConfig());
@@ -547,6 +572,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         tcpNettyServer.bootServer(new ServerConfig());
@@ -612,6 +642,11 @@ public class TCPSinkTestCase {
                 for (Event event : events) {
                     onEvent(event);
                 }
+            }
+
+            @Override
+            public void onEvent(byte[] events) {
+
             }
         });
 
@@ -794,6 +829,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         tcpNettyServer.bootServer(new ServerConfig());
@@ -880,6 +920,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         tcpNettyServer2.addStreamListener(new StreamListener() {
@@ -913,6 +958,11 @@ public class TCPSinkTestCase {
                 for (Event event : events) {
                     onEvent(event);
                 }
+            }
+
+            @Override
+            public void onEvent(byte[] events) {
+
             }
         });
         ServerConfig serverConfig = new ServerConfig();
@@ -1000,6 +1050,11 @@ public class TCPSinkTestCase {
                     onEvent(event);
                 }
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
 
         tcpNettyServer1.bootServer(new ServerConfig());
@@ -1076,6 +1131,11 @@ public class TCPSinkTestCase {
                 for (Event event : events) {
                     onEvent(event);
                 }
+            }
+
+            @Override
+            public void onEvent(byte[] events) {
+
             }
         });
 

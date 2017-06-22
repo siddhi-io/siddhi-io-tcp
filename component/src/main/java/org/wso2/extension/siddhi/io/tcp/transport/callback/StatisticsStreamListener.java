@@ -19,12 +19,16 @@
 package org.wso2.extension.siddhi.io.tcp.transport.callback;
 
 import org.apache.log4j.Logger;
+import org.wso2.extension.siddhi.io.tcp.transport.converter.SiddhiEventConverter1;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.EventDefinitionConverterUtil;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,12 +48,15 @@ public class StatisticsStreamListener implements StreamListener {
     private AtomicLong counter = new AtomicLong(0);
     private AtomicBoolean calcInProgress = new AtomicBoolean(false);
     private DecimalFormat decimalFormat = new DecimalFormat("#.#####");
-    private int elapsedCount = 100000;
+    private int elapsedCount = 1000000;
     private PrintWriter writer = null;
     private StreamDefinition streamDefinition;
+    private Attribute.Type[] types;
 
     public StatisticsStreamListener(StreamDefinition streamDefinition) {
         this.streamDefinition = streamDefinition;
+        types = EventDefinitionConverterUtil.generateAttributeTypeArray(streamDefinition
+                .getAttributeList());
     }
 
     @Override
@@ -64,8 +71,9 @@ public class StatisticsStreamListener implements StreamListener {
         try {
             long currentBatchTotalDelay = 0;
             long currentTime = System.currentTimeMillis();
-            long currentEventLatency = currentTime - event.getTimestamp();
+            long currentEventLatency = System.currentTimeMillis() - event.getTimestamp();
 
+//            System.out.println(currentEventLatency);
             long currentMaxLatency = maxLatency.get();
             if (currentEventLatency > currentMaxLatency) {
                 maxLatency.compareAndSet(currentMaxLatency, currentEventLatency);
@@ -115,6 +123,11 @@ public class StatisticsStreamListener implements StreamListener {
         for (Event event : events) {
             onEvent(event);
         }
+    }
+
+    @Override
+    public void onEvent(byte[] data) {
+        onEvents(SiddhiEventConverter1.toConvertToSiddhiEvents(ByteBuffer.wrap(data), types));
     }
 
     private void writeResult(String data) {

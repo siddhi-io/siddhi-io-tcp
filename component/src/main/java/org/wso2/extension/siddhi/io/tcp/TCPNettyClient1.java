@@ -15,7 +15,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.extension.siddhi.io.tcp.transport;
+package org.wso2.extension.siddhi.io.tcp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -29,18 +29,23 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.log4j.Logger;
+import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
+import org.wso2.extension.siddhi.io.tcp.transport.converter.BinaryEventConverter1;
 import org.wso2.extension.siddhi.io.tcp.transport.handlers.EventEncoder;
+import org.wso2.extension.siddhi.io.tcp.transport.handlers.EventEncoder1;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite;
 import org.wso2.siddhi.core.event.Event;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
 /**
  * Tcp Netty Client.
  */
-public class TCPNettyClient {
-    private static final Logger log = Logger.getLogger(TCPNettyClient.class);
+public class TCPNettyClient1 {
+    private static final Logger log = Logger.getLogger(TCPNettyClient1.class);
 
     private EventLoopGroup group;
     private Bootstrap bootstrap;
@@ -49,7 +54,7 @@ public class TCPNettyClient {
     private String hostAndPort;
 
 
-    public TCPNettyClient() {
+    public TCPNettyClient1() {
         group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -61,10 +66,30 @@ public class TCPNettyClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addFirst(
-                                new EventEncoder()
+                                new EventEncoder1()
                         );
                     }
                 });
+    }
+
+    public static void main(String[] args) throws IOException {
+        TCPNettyClient1 tcpNettyClient = new TCPNettyClient1();
+        tcpNettyClient.connect("localhost", 9892);
+        for (int i = 0; i < 1000000; i++) {
+            ArrayList<Event> arrayList = new ArrayList<Event>(100);
+            for (int j = 0; j < 5; j++) {
+                arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"WSO2", i, 10}));
+                arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"IBM", i, 10}));
+            }
+            try {
+                tcpNettyClient.send("StockStream",
+                        BinaryEventConverter1.convertToBinaryMessage(arrayList.toArray(new Event[10])).array()).sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        tcpNettyClient.disconnect();
+        tcpNettyClient.shutdown();
     }
 
     public void connect(String host, int port) {
@@ -78,15 +103,15 @@ public class TCPNettyClient {
         }
     }
 
-    public ChannelFuture send(final String streamId, final Event[] events) {
-        EventComposite eventComposite = new EventComposite(sessionId, streamId, events, null);
+    public ChannelFuture send(final String streamId, final byte[] data) {
+        EventComposite eventComposite = new EventComposite(sessionId, streamId, null, data);
         ChannelFuture cf = channel.writeAndFlush(eventComposite);
         cf.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (!future.isSuccess()) {
                     log.error("Error sending events to '" + hostAndPort + "' on stream '" + streamId +
-                            "', " + future.cause() + ", dropping events " + Arrays.deepToString(events), future.cause
+                            "', " + future.cause() + ", dropping events " , future.cause
                             ());
                 }
             }

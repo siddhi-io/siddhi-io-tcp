@@ -24,6 +24,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.wso2.extension.siddhi.io.tcp.transport.converter.SiddhiEventConverter;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamTypeHolder;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 

@@ -26,6 +26,7 @@ import org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite;
 import org.wso2.siddhi.core.event.Event;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 

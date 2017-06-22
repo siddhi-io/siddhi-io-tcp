@@ -76,6 +76,11 @@ public class TCPSource extends Source {
             public void onEvents(Event[] events) {
                 sourceEventListener.onEvent(events);
             }
+
+            @Override
+            public void onEvent(byte[] events) {
+
+            }
         });
     }
 

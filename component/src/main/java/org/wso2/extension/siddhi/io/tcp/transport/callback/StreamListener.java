@@ -31,4 +31,6 @@ public interface StreamListener {
     void onEvent(Event event);
 
     void onEvents(Event[] events);
+
+    void onEvent(byte[] events);
 }

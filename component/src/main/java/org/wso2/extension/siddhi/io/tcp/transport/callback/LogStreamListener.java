@@ -52,4 +52,9 @@ public class LogStreamListener implements StreamListener {
     public void onEvents(Event[] events) {
         log.info(count.addAndGet(events.length) + " " + Arrays.deepToString(events));
     }
+
+    @Override
+    public void onEvent(byte[] events) {
+
+    }
 }

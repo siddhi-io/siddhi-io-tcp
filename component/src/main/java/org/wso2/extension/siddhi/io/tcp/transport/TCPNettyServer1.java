@@ -18,34 +18,29 @@
 package org.wso2.extension.siddhi.io.tcp.transport;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.EmptyByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StatisticsStreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
 import org.wso2.extension.siddhi.io.tcp.transport.handlers.EventDecoder;
+import org.wso2.extension.siddhi.io.tcp.transport.handlers.EventDecoder1;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamTypeHolder;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
-import java.io.Serializable;
-
 /**
  * TCP Netty Server.
  */
-public class TCPNettyServer {
-    private static final Logger log = Logger.getLogger(TCPNettyServer.class);
+public class TCPNettyServer1 {
+    private static final Logger log = Logger.getLogger(TCPNettyServer1.class);
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private StreamTypeHolder streamInfoHolder = new StreamTypeHolder();
@@ -58,7 +53,7 @@ public class TCPNettyServer {
                 .STRING)
                 .attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.INT);
 
-        TCPNettyServer tcpNettyServer = new TCPNettyServer();
+        TCPNettyServer1 tcpNettyServer = new TCPNettyServer1();
 //        tcpNettyServer.addStreamListener(new LogStreamListener(streamDefinition));
         tcpNettyServer.addStreamListener(new StatisticsStreamListener(streamDefinition));
 
@@ -89,7 +84,7 @@ public class TCPNettyServer {
                         protected void initChannel(Channel channel) throws Exception {
                             ChannelPipeline p = channel.pipeline();
 //                            p.addLast(flowController);
-                            p.addLast(new EventDecoder(streamInfoHolder));
+                            p.addLast(new EventDecoder1(streamInfoHolder));
                         }
                     })
                     .option(ChannelOption.TCP_NODELAY, true)          // (5)
@@ -136,54 +131,3 @@ public class TCPNettyServer {
     }
 }
 
-/**
- * This {@link io.netty.channel.ChannelInboundHandlerAdapter} implementation is used to control the flow when the
- * transport is needed to be paused or resumed. When the transport is paused, this would keep the read messages in
- * an internal {@link CircularFifoQueue} with a user defined size (default is
- * {@link org.wso2.extension.siddhi.io.tcp.transport.utils.Constant#DEFAULT_QUEUE_SIZE_OF_TCP_TRANSPORT}).
- */
-class FlowController extends ChannelInboundHandlerAdapter {
-    private final CircularFifoQueue<Object> queue;
-    private ChannelHandlerContext channelHandlerContext;
-    private boolean paused;
-
-    FlowController(int size) {
-        queue = new CircularFifoQueue<Object>(size);
-    }
-
-    void isPaused(boolean paused) {
-        this.paused = paused;
-        channelRead(channelHandlerContext, null);
-    }
-
-    public void channelActive(ChannelHandlerContext ctx) {
-        channelHandlerContext = ctx;
-        // since auto-read is set to false, we have to trigger the read
-        ctx.channel().read();
-    }
-
-    public void channelRead(final ChannelHandlerContext ctx, Object msg) {
-        // since auto-read is set to false, we have to trigger the read
-        ctx.channel().read();
-
-        if (msg != null) {
-            // queue the message
-            queue.add(msg);
-        }
-
-        if (!paused) {
-            // deque the messages if the transport is not paused
-            Object e;
-            while ((e = queue.poll()) != null) {
-                if (!(e instanceof EmptyByteBuf)) {
-                    ctx.fireChannelRead(e);
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean isSharable() {
-        return true;
-    }
-}

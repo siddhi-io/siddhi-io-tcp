@@ -101,7 +101,7 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("foo/inputStream", arrayList.toArray(new Event[3]));
+        tcpNettyClient.send("foo/inputStream", arrayList.toArray(new Event[3])).await();
 
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();
@@ -163,7 +163,7 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("bar", arrayList.toArray(new Event[3]));
+        tcpNettyClient.send("bar", arrayList.toArray(new Event[3])).await();
 
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();

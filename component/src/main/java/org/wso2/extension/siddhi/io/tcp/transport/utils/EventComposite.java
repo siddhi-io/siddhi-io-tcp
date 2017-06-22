@@ -28,11 +28,13 @@ public class EventComposite {
     private Event[] events;
     private String streamId;
     private String sessionId;
+    private byte[] data;
 
-    public EventComposite(String sessionId, String streamId, Event[] events) {
+    public EventComposite(String sessionId, String streamId, Event[] events, byte[] data) {
         this.sessionId = sessionId;
         this.streamId = streamId;
         this.events = events;
+        this.data = data;
     }
 
     public Event[] getEvents() {
@@ -45,5 +47,9 @@ public class EventComposite {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    public byte[] getData() {
+        return data;
     }
 }
