@@ -56,10 +56,6 @@
             <groupId>org.wso2.extension.siddhi.map.binary</groupId>
             <artifactId>siddhi-map-binary</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apache.commons</groupId>-->
-        <!--<artifactId>commons-collections4</artifactId>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -88,8 +84,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.extension.siddhi.io.tcp.source.*,
-                            org.wso2.extension.siddhi.io.tcp.sink.*
+                            org.wso2.extension.siddhi.io.tcp.*
                         </Export-Package>
                         <Import-Package>
                             *;resolution:=optional

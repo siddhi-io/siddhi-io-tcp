@@ -51,7 +51,6 @@
         <testng.version>6.8</testng.version>
         <netty.verion>4.1.6.Final</netty.verion>
         <siddhi.map.bianry.version>1.0.0-SNAPSHOT</siddhi.map.bianry.version>
-        <commons-collection.version>4.0</commons-collection.version>
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
         <mavan.checkstyle.suppression.file>checkstyle-suppressions.xml</mavan.checkstyle.suppression.file>
     </properties>
@@ -113,11 +112,6 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${netty.verion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>${commons-collection.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
