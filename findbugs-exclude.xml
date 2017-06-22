@@ -19,7 +19,7 @@
 
 <FindBugsFilter>
     <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageDecoder"/>
+        <Class name="org.wso2.extension.siddhi.io.tcp.transport.utils.FlowController"/>
         <Bug pattern="WA_AWAIT_NOT_IN_LOOP"/>
     </Match>
     <Match>

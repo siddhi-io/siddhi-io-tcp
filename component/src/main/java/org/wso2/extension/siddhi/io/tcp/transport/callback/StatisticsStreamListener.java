@@ -19,8 +19,8 @@
 package org.wso2.extension.siddhi.io.tcp.transport.callback;
 
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.io.tcp.transport.utils.EventDefinitionConverterUtil;
-import org.wso2.extension.siddhi.io.tcp.transport.utils.SiddhiEventConverter;
+import org.wso2.extension.siddhi.map.binary.sourcemapper.SiddhiEventConverter;
+import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;

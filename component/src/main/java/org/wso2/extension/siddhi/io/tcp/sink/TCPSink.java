@@ -34,6 +34,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Map;
 
@@ -67,16 +68,16 @@ public class TCPSink extends Sink {
                         ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
         tcpNettyClient = new TCPNettyClient();
         String url = optionHolder.validateAndGetStaticValue(URL);
-        syncOption = optionHolder.validateAndGetOption(SYNC);
+        syncOption = optionHolder.getOrCreateOption(SYNC, "false");
         try {
-            URL aURL = new URL(url);
-            if (!aURL.getProtocol().equals("tcp")) {
+            if (!url.startsWith("tcp:")) {
                 throw new SiddhiAppCreationException("Malformed url '" + url + "' with wrong protocol found, " +
                         "expected in format 'tcp://<host>:<port>/<context>'");
             }
+            URL aURL = new URL(url.replaceFirst("tcp", "http"));
             host = aURL.getHost();
             port = aURL.getPort();
-            channelId = aURL.getPath();
+            channelId = aURL.getPath().substring(1);
         } catch (MalformedURLException e) {
             throw new SiddhiAppCreationException("Malformed url '" + url + "' found, expected in format " +
                     "'tcp://<host>:<port>/<context>'", e);
@@ -93,6 +94,8 @@ public class TCPSink extends Sink {
     public void publish(Object payload, DynamicOptions dynamicOptions) throws ConnectionUnavailableException {
         if (payload instanceof String) {
             tcpNettyClient.send(channelId, ((String) payload).getBytes(Charset.defaultCharset()));
+        } else if (payload instanceof ByteBuffer) {
+            tcpNettyClient.send(channelId, ((ByteBuffer) payload).array());
         } else {
             tcpNettyClient.send(channelId, (byte[]) payload);
         }

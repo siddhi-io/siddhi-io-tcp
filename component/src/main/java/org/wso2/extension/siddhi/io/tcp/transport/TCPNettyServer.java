@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
 import org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageDecoder;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.FlowController;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamListenerHolder;
 
 /**
@@ -44,7 +45,7 @@ public class TCPNettyServer {
     private ChannelFuture channelFuture;
     private String hostAndPort;
     private ServerConfig serverConfig;
-    private MessageDecoder messageDecoder = null;
+    private FlowController flowController = new FlowController();
 
 //    public static void main(String[] args) {
 //        StreamDefinition streamDefinition = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type
@@ -64,10 +65,6 @@ public class TCPNettyServer {
 //        }
 //    }
 
-    public TCPNettyServer() {
-        messageDecoder = new MessageDecoder(streamInfoHolder);
-    }
-
     public void start(ServerConfig serverConf) {
         serverConfig = serverConf;
         bossGroup = new NioEventLoopGroup(serverConfig.getReceiverThreads());
@@ -83,7 +80,7 @@ public class TCPNettyServer {
                     @Override
                     protected void initChannel(Channel channel) throws Exception {
                         ChannelPipeline p = channel.pipeline();
-                        p.addLast(messageDecoder);
+                        p.addLast(new MessageDecoder(streamInfoHolder, flowController));
                     }
                 })
                 .option(ChannelOption.TCP_NODELAY, true)
@@ -126,11 +123,11 @@ public class TCPNettyServer {
     }
 
     public void pause() {
-        messageDecoder.pause();
+        flowController.pause();
     }
 
     public void resume() {
-        messageDecoder.resume();
+        flowController.resume();
     }
 }
 

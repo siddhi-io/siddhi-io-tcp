@@ -56,6 +56,7 @@ public class TCPServer {
 
 
     public synchronized void addStreamListener(StreamListener streamListener) {
+        start();
         tcpNettyServer.addStreamListener(streamListener);
     }
 

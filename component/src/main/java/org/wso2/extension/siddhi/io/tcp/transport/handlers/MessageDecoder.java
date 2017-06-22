@@ -24,13 +24,11 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.BinaryMessageConverterUtil;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.FlowController;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamListenerHolder;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 
 /**
  * Byte to message decoder.
@@ -38,14 +36,11 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MessageDecoder extends ByteToMessageDecoder {
     static final Logger LOG = Logger.getLogger(MessageDecoder.class);
     private StreamListenerHolder streamInfoHolder;
-    private volatile boolean paused;
-    private ReentrantLock lock;
-    private Condition condition;
+    private FlowController flowController;
 
-    public MessageDecoder(StreamListenerHolder streamInfoHolder) {
+    public MessageDecoder(StreamListenerHolder streamInfoHolder, FlowController flowController) {
         this.streamInfoHolder = streamInfoHolder;
-        this.lock = new ReentrantLock();
-        this.condition = lock.newCondition();
+        this.flowController = flowController;
     }
 
     @Override
@@ -61,16 +56,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
                 return;
             }
 
-            if (paused) { //spurious wakeup condition is deliberately traded off for performance
-                lock.lock();
-                try {
-                    condition.await();
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                } finally {
-                    lock.unlock();
-                }
-            }
+            flowController.barrier();
 
             int sessionIdSize = in.readInt();
             BinaryMessageConverterUtil.getString(in, sessionIdSize);
@@ -98,17 +84,4 @@ public class MessageDecoder extends ByteToMessageDecoder {
 
     }
 
-    public void pause() {
-        paused = true;
-    }
-
-    public void resume() {
-        paused = false;
-        try {
-            lock.lock();
-            condition.signalAll();
-        } finally {
-            lock.unlock();
-        }
-    }
 }
