@@ -115,7 +115,7 @@ public class TCPSinkTestCase {
             }
         });
 
-        tcpNettyServer.bootServer(new ServerConfig());
+        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -222,7 +222,7 @@ public class TCPSinkTestCase {
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setPort(9766);
         serverConfig.setHost("127.0.0.1");
-        tcpNettyServer.bootServer(serverConfig);
+        tcpNettyServer.start(serverConfig);
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -307,7 +307,7 @@ public class TCPSinkTestCase {
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setPort(9766);
         serverConfig.setHost("127.0.0.1");
-        tcpNettyServer.bootServer(serverConfig);
+        tcpNettyServer.start(serverConfig);
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -392,7 +392,7 @@ public class TCPSinkTestCase {
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setPort(9766);
         serverConfig.setHost("127.0.0.1");
-        tcpNettyServer.bootServer(serverConfig);
+        tcpNettyServer.start(serverConfig);
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -500,7 +500,7 @@ public class TCPSinkTestCase {
             }
         });
 
-        tcpNettyServer.bootServer(new ServerConfig());
+        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -579,7 +579,7 @@ public class TCPSinkTestCase {
             }
         });
 
-        tcpNettyServer.bootServer(new ServerConfig());
+        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -650,7 +650,7 @@ public class TCPSinkTestCase {
             }
         });
 
-        tcpNettyServer.bootServer(new ServerConfig());
+        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -800,22 +800,22 @@ public class TCPSinkTestCase {
                 commenting this out since we cannot guarantee an event order here
                 switch (count) {
                     case 1:
-                        AssertJUnit.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getMessage(0));
                         break;
                     case 2:
-                        AssertJUnit.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getMessage(0));
                         break;
                     case 3:
-                        AssertJUnit.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getMessage(0));
                         break;
                     case 4:
-                        AssertJUnit.assertEquals("test", event.getData(0));
+                        AssertJUnit.assertEquals("test", event.getMessage(0));
                         break;
                     case 5:
-                        AssertJUnit.assertEquals("test1", event.getData(0));
+                        AssertJUnit.assertEquals("test1", event.getMessage(0));
                         break;
                     case 6:
-                        AssertJUnit.assertEquals("test2", event.getData(0));
+                        AssertJUnit.assertEquals("test2", event.getMessage(0));
                         break;
                     default:
                         AssertJUnit.fail();
@@ -836,7 +836,7 @@ public class TCPSinkTestCase {
             }
         });
 
-        tcpNettyServer.bootServer(new ServerConfig());
+        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -967,8 +967,8 @@ public class TCPSinkTestCase {
         });
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setPort(9854);
-        tcpNettyServer1.bootServer(serverConfig);
-        tcpNettyServer2.bootServer(new ServerConfig());
+        tcpNettyServer1.start(serverConfig);
+        tcpNettyServer2.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -1057,7 +1057,7 @@ public class TCPSinkTestCase {
             }
         });
 
-        tcpNettyServer1.bootServer(new ServerConfig());
+        tcpNettyServer1.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
         siddhiAppRuntime.start();
@@ -1142,7 +1142,7 @@ public class TCPSinkTestCase {
 
         siddhiAppRuntime.start();
         Thread.sleep(2000);
-        tcpNettyServer.bootServer(new ServerConfig());
+        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
 

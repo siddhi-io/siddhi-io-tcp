@@ -18,19 +18,12 @@
 
 package org.wso2.extension.siddhi.io.tcp.transport.callback;
 
-import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
-
 /**
  * Stream Listener to consume events from tcp.
  */
 public interface StreamListener {
 
-    StreamDefinition getStreamDefinition();
+    String getChannelId();
 
-    void onEvent(Event event);
-
-    void onEvents(Event[] events);
-
-    void onEvent(byte[] events);
+    void onMessage(byte[] message);
 }

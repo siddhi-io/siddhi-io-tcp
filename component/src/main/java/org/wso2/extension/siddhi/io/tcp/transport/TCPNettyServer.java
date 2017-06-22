@@ -18,86 +18,80 @@
 package org.wso2.extension.siddhi.io.tcp.transport;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.EmptyByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.io.tcp.transport.callback.StatisticsStreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
-import org.wso2.extension.siddhi.io.tcp.transport.handlers.EventDecoder;
-import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamTypeHolder;
-import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
-
-import java.io.Serializable;
+import org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageDecoder;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamListenerHolder;
 
 /**
  * TCP Netty Server.
  */
 public class TCPNettyServer {
     private static final Logger log = Logger.getLogger(TCPNettyServer.class);
+    private ServerBootstrap bootstrap;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
-    private StreamTypeHolder streamInfoHolder = new StreamTypeHolder();
+    private StreamListenerHolder streamInfoHolder = new StreamListenerHolder();
     private ChannelFuture channelFuture;
     private String hostAndPort;
-//    private FlowController flowController;
+    private ServerConfig serverConfig;
+    private MessageDecoder messageDecoder = null;
 
-    public static void main(String[] args) {
-        StreamDefinition streamDefinition = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type
-                .STRING)
-                .attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.INT);
+//    public static void main(String[] args) {
+//        StreamDefinition streamDefinition = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type
+//                .STRING)
+//                .attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.INT);
+//
+//        TCPNettyServer tcpNettyServer = new TCPNettyServer();
+////        tcpNettyServer.addStreamListener(new LogStreamListener(streamDefinition));
+//        tcpNettyServer.addStreamListener(new StatisticsStreamListener(streamDefinition));
+//
+//        tcpNettyServer.start(new ServerConfig());
+//        try {
+//            Thread.sleep(1000000);
+//        } catch (InterruptedException e) {
+//        } finally {
+//            tcpNettyServer.shutdownGracefully();
+//        }
+//    }
 
-        TCPNettyServer tcpNettyServer = new TCPNettyServer();
-//        tcpNettyServer.addStreamListener(new LogStreamListener(streamDefinition));
-        tcpNettyServer.addStreamListener(new StatisticsStreamListener(streamDefinition));
-
-        tcpNettyServer.bootServer(new ServerConfig());
-        try {
-            Thread.sleep(1000000);
-        } catch (InterruptedException e) {
-        } finally {
-            tcpNettyServer.shutdownGracefully();
-        }
+    public TCPNettyServer() {
+        messageDecoder = new MessageDecoder(streamInfoHolder);
     }
 
-    public void bootServer(ServerConfig serverConfig) {
+    public void start(ServerConfig serverConf) {
+        serverConfig = serverConf;
         bossGroup = new NioEventLoopGroup(serverConfig.getReceiverThreads());
         workerGroup = new NioEventLoopGroup(serverConfig.getWorkerThreads());
+
         hostAndPort = serverConfig.getHost() + ":" + serverConfig.getPort();
+
+        bootstrap = new ServerBootstrap();
+        bootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer() {
+
+                    @Override
+                    protected void initChannel(Channel channel) throws Exception {
+                        ChannelPipeline p = channel.pipeline();
+                        p.addLast(messageDecoder);
+                    }
+                })
+                .option(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_KEEPALIVE, true);
+
         try {
-//            flowController = new FlowController(serverConfig.getQueueSizeOfTcpTransport());
-            // More terse code to setup the server
-            ServerBootstrap bootstrap = new ServerBootstrap();
-
-            bootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-//                    .childOption(ChannelOption.AUTO_READ, false)
-                    .childHandler(new ChannelInitializer() {
-
-                        @Override
-                        protected void initChannel(Channel channel) throws Exception {
-                            ChannelPipeline p = channel.pipeline();
-//                            p.addLast(flowController);
-                            p.addLast(new EventDecoder(streamInfoHolder));
-                        }
-                    })
-                    .option(ChannelOption.TCP_NODELAY, true)          // (5)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (6);
-
             // Bind and start to accept incoming connections.
             channelFuture = bootstrap.bind(serverConfig.getHost(), serverConfig.getPort()).sync();
-
             log.info("Tcp Server started in " + hostAndPort + "");
         } catch (InterruptedException e) {
             log.error("Error when booting up tcp server on '" + hostAndPort + "' " + e.getMessage(), e);
@@ -131,59 +125,12 @@ public class TCPNettyServer {
         return streamInfoHolder.getNoOfRegisteredStreamListeners();
     }
 
-    public void isPaused(boolean paused) {
-//        flowController.isPaused(paused);
+    public void pause() {
+        messageDecoder.pause();
+    }
+
+    public void resume() {
+        messageDecoder.resume();
     }
 }
 
-/**
- * This {@link io.netty.channel.ChannelInboundHandlerAdapter} implementation is used to control the flow when the
- * transport is needed to be paused or resumed. When the transport is paused, this would keep the read messages in
- * an internal {@link CircularFifoQueue} with a user defined size (default is
- * {@link org.wso2.extension.siddhi.io.tcp.transport.utils.Constant#DEFAULT_QUEUE_SIZE_OF_TCP_TRANSPORT}).
- */
-class FlowController extends ChannelInboundHandlerAdapter {
-    private final CircularFifoQueue<Object> queue;
-    private ChannelHandlerContext channelHandlerContext;
-    private boolean paused;
-
-    FlowController(int size) {
-        queue = new CircularFifoQueue<Object>(size);
-    }
-
-    void isPaused(boolean paused) {
-        this.paused = paused;
-        channelRead(channelHandlerContext, null);
-    }
-
-    public void channelActive(ChannelHandlerContext ctx) {
-        channelHandlerContext = ctx;
-        // since auto-read is set to false, we have to trigger the read
-        ctx.channel().read();
-    }
-
-    public void channelRead(final ChannelHandlerContext ctx, Object msg) {
-        // since auto-read is set to false, we have to trigger the read
-        ctx.channel().read();
-
-        if (msg != null) {
-            // queue the message
-            queue.add(msg);
-        }
-
-        if (!paused) {
-            // deque the messages if the transport is not paused
-            Object e;
-            while ((e = queue.poll()) != null) {
-                if (!(e instanceof EmptyByteBuf)) {
-                    ctx.fireChannelRead(e);
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean isSharable() {
-        return true;
-    }
-}

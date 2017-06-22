@@ -22,24 +22,30 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.io.tcp.transport.converter.SiddhiEventConverter;
+import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.BinaryMessageConverterUtil;
-import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamInfo;
-import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamTypeHolder;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.StreamListenerHolder;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- * Byte to Siddhi event decoder.
+ * Byte to message decoder.
  */
-public class EventDecoder1 extends ByteToMessageDecoder {
-    static final Logger LOG = Logger.getLogger(SiddhiEventConverter.class);
-    private StreamTypeHolder streamInfoHolder;
+public class MessageDecoder extends ByteToMessageDecoder {
+    static final Logger LOG = Logger.getLogger(MessageDecoder.class);
+    private StreamListenerHolder streamInfoHolder;
+    private volatile boolean paused;
+    private ReentrantLock lock;
+    private Condition condition;
 
-    public EventDecoder1(StreamTypeHolder streamInfoHolder) {
+    public MessageDecoder(StreamListenerHolder streamInfoHolder) {
         this.streamInfoHolder = streamInfoHolder;
+        this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
     }
 
     @Override
@@ -55,25 +61,34 @@ public class EventDecoder1 extends ByteToMessageDecoder {
                 return;
             }
 
+            if (paused) { //spurious wakeup condition is deliberately traded off for performance
+                lock.lock();
+                try {
+                    condition.await();
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    lock.unlock();
+                }
+            }
+
             int sessionIdSize = in.readInt();
             BinaryMessageConverterUtil.getString(in, sessionIdSize);
 
-            int streamIdSize = in.readInt();
-            String streamId = BinaryMessageConverterUtil.getString(in, streamIdSize);
+            int channelIdSize = in.readInt();
+            String channelId = BinaryMessageConverterUtil.getString(in, channelIdSize);
 
             int dataLength = in.readInt();
             byte[] bytes = new byte[dataLength];
             in.readBytes(bytes);
 
-            StreamInfo streamInfo = streamInfoHolder.getStreamInfo(streamId);
-
-            if (streamInfo == null) {
+            StreamListener streamListener = streamInfoHolder.getStreamListener(channelId);
+            if (streamListener == null) {
                 in.markReaderIndex();
-                LOG.error("Events with unknown streamId : '" + streamId + "' hence dropping the events!");
+                LOG.error("Events with unknown channelId : '" + channelId + "' hence dropping the events!");
                 return;
             }
-
-            streamInfo.getStreamListener().onEvent(bytes);
+            streamListener.onMessage(bytes);
 
         } catch (UnsupportedEncodingException e) {
             LOG.error(e.getMessage(), e);
@@ -81,5 +96,19 @@ public class EventDecoder1 extends ByteToMessageDecoder {
             in.markReaderIndex();
         }
 
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+        try {
+            lock.lock();
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 }

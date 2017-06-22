@@ -29,11 +29,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.io.tcp.transport.handlers.EventEncoder;
+import org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageEncoder;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite;
-import org.wso2.siddhi.core.event.Event;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -48,20 +46,27 @@ public class TCPNettyClient {
     private String sessionId;
     private String hostAndPort;
 
+    public TCPNettyClient(boolean keepAlive, boolean noDelay) {
+        this(0, keepAlive, noDelay);
+    }
 
     public TCPNettyClient() {
-        group = new NioEventLoopGroup();
+        this(0, true, true);
+    }
+
+    public TCPNettyClient(int numberOfThreads, boolean keepAlive, boolean noDelay) {
+        group = new NioEventLoopGroup(numberOfThreads);
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.SO_KEEPALIVE, keepAlive)
+                .option(ChannelOption.TCP_NODELAY, noDelay)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addFirst(
-                                new EventEncoder()
+                                new MessageEncoder()
                         );
                     }
                 });
@@ -78,16 +83,15 @@ public class TCPNettyClient {
         }
     }
 
-    public ChannelFuture send(final String streamId, final Event[] events) {
-        EventComposite eventComposite = new EventComposite(sessionId, streamId, events, null);
+    public ChannelFuture send(final String channelId, final byte[] message) {
+        EventComposite eventComposite = new EventComposite(sessionId, channelId, message);
         ChannelFuture cf = channel.writeAndFlush(eventComposite);
         cf.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (!future.isSuccess()) {
-                    log.error("Error sending events to '" + hostAndPort + "' on stream '" + streamId +
-                            "', " + future.cause() + ", dropping events " + Arrays.deepToString(events), future.cause
-                            ());
+                    log.error("Error sending events to '" + hostAndPort + "' on channel '" + channelId +
+                            "', " + future.cause() + ", dropping events ", future.cause());
                 }
             }
         });

@@ -19,10 +19,8 @@
 package org.wso2.extension.siddhi.io.tcp.transport.callback;
 
 import org.apache.log4j.Logger;
-import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
-import java.util.Arrays;
+import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -30,31 +28,20 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class LogStreamListener implements StreamListener {
     private static final Logger log = Logger.getLogger(LogStreamListener.class);
-    private StreamDefinition streamDefinition;
     private AtomicLong count = new AtomicLong(0);
+    private String channelId;
 
-    public LogStreamListener(StreamDefinition streamDefinition) {
-
-        this.streamDefinition = streamDefinition;
+    public LogStreamListener(String channelId) {
+        this.channelId = channelId;
     }
 
     @Override
-    public StreamDefinition getStreamDefinition() {
-        return streamDefinition;
+    public String getChannelId() {
+        return channelId;
     }
 
     @Override
-    public void onEvent(Event event) {
-        log.info(count.incrementAndGet() + " " + event);
-    }
-
-    @Override
-    public void onEvents(Event[] events) {
-        log.info(count.addAndGet(events.length) + " " + Arrays.deepToString(events));
-    }
-
-    @Override
-    public void onEvent(byte[] events) {
-
+    public void onMessage(byte[] message) {
+        log.info(count.incrementAndGet() + " " + new String(message, Charset.defaultCharset()));
     }
 }

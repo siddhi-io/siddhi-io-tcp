@@ -18,38 +18,29 @@
 
 package org.wso2.extension.siddhi.io.tcp.transport.utils;
 
-import org.wso2.siddhi.core.event.Event;
-
 /**
- * Class to hold Siddhi Event and the corresponding stream iD. Composite was introduced because
- * {@link org.wso2.siddhi.core.event.Event} does not contain a stream ID
+ * Class to hold the message and the corresponding getChannelId.
  */
 public class EventComposite {
-    private Event[] events;
-    private String streamId;
+    private String channelId;
     private String sessionId;
-    private byte[] data;
+    private byte[] message;
 
-    public EventComposite(String sessionId, String streamId, Event[] events, byte[] data) {
+    public EventComposite(String sessionId, String channelId, byte[] message) {
         this.sessionId = sessionId;
-        this.streamId = streamId;
-        this.events = events;
-        this.data = data;
+        this.channelId = channelId;
+        this.message = message;
     }
 
-    public Event[] getEvents() {
-        return events;
-    }
-
-    public String getStreamId() {
-        return streamId;
+    public String getChannelId() {
+        return channelId;
     }
 
     public String getSessionId() {
         return sessionId;
     }
 
-    public byte[] getData() {
-        return data;
+    public byte[] getMessage() {
+        return message;
     }
 }

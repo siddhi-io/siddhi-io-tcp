@@ -27,9 +27,10 @@ import org.wso2.extension.siddhi.io.tcp.transport.utils.Constant;
 public class ServerConfig {
     private int receiverThreads = Constant.DEFAULT_RECEIVER_THREADS;
     private int workerThreads = Constant.DEFAULT_WORKER_THREADS;
-    private int queueSizeOfTcpTransport = Constant.DEFAULT_QUEUE_SIZE_OF_TCP_TRANSPORT;
     private int port = Constant.DEFAULT_PORT;
     private String host = Constant.DEFAULT_HOST;
+    private boolean tcpNoDelay = Constant.TCP_NO_DELAY;
+    private boolean keepAlive = Constant.KEEP_ALIVE;
 
     public int getReceiverThreads() {
         return receiverThreads;
@@ -47,14 +48,6 @@ public class ServerConfig {
         this.workerThreads = workerThreads;
     }
 
-    public int getQueueSizeOfTcpTransport() {
-        return queueSizeOfTcpTransport;
-    }
-
-    public void setQueueSizeOfTcpTransport(int queueSizeOfTcpTransport) {
-        this.queueSizeOfTcpTransport = queueSizeOfTcpTransport;
-    }
-
     public int getPort() {
         return port;
     }
@@ -69,5 +62,21 @@ public class ServerConfig {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public boolean isTcpNoDelay() {
+        return tcpNoDelay;
+    }
+
+    public void setTcpNoDelay(boolean tcpNoDelay) {
+        this.tcpNoDelay = tcpNoDelay;
+    }
+
+    public boolean isKeepAlive() {
+        return keepAlive;
+    }
+
+    public void setKeepAlive(boolean keepAlive) {
+        this.keepAlive = keepAlive;
     }
 }

@@ -19,23 +19,11 @@
 
 <FindBugsFilter>
     <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.converter.BinaryEventConverter"/>
-        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
-    </Match>
-    <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.utils.BinaryMessageConverterUtil"/>
-        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
-    </Match>
-    <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient"/>
-        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+        <Class name="org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageDecoder"/>
+        <Bug pattern="WA_AWAIT_NOT_IN_LOOP"/>
     </Match>
     <Match>
         <Class name="org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite"/>
         <Bug pattern="EI_EXPOSE_REP, EI_EXPOSE_REP2"/>
-    </Match>
-    <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.utils.StreamInfo"/>
-        <Bug pattern="EI_EXPOSE_REP"/>
     </Match>
 </FindBugsFilter>

@@ -19,8 +19,8 @@
 package org.wso2.extension.siddhi.io.tcp.transport.callback;
 
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.io.tcp.transport.converter.SiddhiEventConverter1;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.EventDefinitionConverterUtil;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.SiddhiEventConverter;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -60,20 +60,27 @@ public class StatisticsStreamListener implements StreamListener {
     }
 
     @Override
-    public StreamDefinition getStreamDefinition() {
-        return streamDefinition;
+    public String getChannelId() {
+        return streamDefinition.getId();
     }
 
     @Override
-    public void onEvent(Event event) {
-//        log.info(event);
+    public void onMessage(byte[] message) {
+        onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+    }
 
+    private void onEvents(Event[] events) {
+        for (Event event : events) {
+            onEvent(event);
+        }
+    }
+
+    private void onEvent(Event event) {
         try {
             long currentBatchTotalDelay = 0;
             long currentTime = System.currentTimeMillis();
             long currentEventLatency = System.currentTimeMillis() - event.getTimestamp();
 
-//            System.out.println(currentEventLatency);
             long currentMaxLatency = maxLatency.get();
             if (currentEventLatency > currentMaxLatency) {
                 maxLatency.compareAndSet(currentMaxLatency, currentEventLatency);
@@ -113,21 +120,7 @@ public class StatisticsStreamListener implements StreamListener {
             }
         } catch (Exception e) {
             log.info("Error while consuming event on " + streamDefinition.getId() + ", " + e.getMessage());
-        } finally {
-            //channelHandlerContext.close();
         }
-    }
-
-    @Override
-    public void onEvents(Event[] events) {
-        for (Event event : events) {
-            onEvent(event);
-        }
-    }
-
-    @Override
-    public void onEvent(byte[] data) {
-        onEvents(SiddhiEventConverter1.toConvertToSiddhiEvents(ByteBuffer.wrap(data), types));
     }
 
     private void writeResult(String data) {
@@ -144,6 +137,5 @@ public class StatisticsStreamListener implements StreamListener {
         writer.println(data);
         writer.flush();
     }
-
 
 }

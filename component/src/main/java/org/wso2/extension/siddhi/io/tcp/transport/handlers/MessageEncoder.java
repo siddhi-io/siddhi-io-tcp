@@ -25,17 +25,17 @@ import org.wso2.extension.siddhi.io.tcp.transport.utils.Constant;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite;
 
 /**
- * Siddhi event to bite converter.
+ * message to bite converter.
  */
-public class EventEncoder1 extends MessageToByteEncoder<EventComposite> {
+public class MessageEncoder extends MessageToByteEncoder<EventComposite> {
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, EventComposite eventComposite, ByteBuf
-            byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, EventComposite eventComposite,
+                          ByteBuf byteBuf) throws Exception {
 
         String sessionId = eventComposite.getSessionId();
-        String streamId = eventComposite.getStreamId();
-        int dataLength = eventComposite.getData().length;
+        String streamId = eventComposite.getChannelId();
+        int dataLength = eventComposite.getMessage().length;
 
         int messageSize = 4 + sessionId.length() + 4 + streamId.length() + 4 + dataLength;
 
@@ -46,7 +46,7 @@ public class EventEncoder1 extends MessageToByteEncoder<EventComposite> {
         byteBuf.writeInt(streamId.length()); //4
         byteBuf.writeBytes(streamId.getBytes(Constant.DEFAULT_CHARSET));
         byteBuf.writeInt(dataLength); //4
-        byteBuf.writeBytes(eventComposite.getData());
+        byteBuf.writeBytes(eventComposite.getMessage());
     }
 
 }

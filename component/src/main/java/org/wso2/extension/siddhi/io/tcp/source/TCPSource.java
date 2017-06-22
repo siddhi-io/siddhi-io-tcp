@@ -22,13 +22,11 @@ import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
-import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.stream.input.source.Source;
 import org.wso2.siddhi.core.stream.input.source.SourceEventListener;
 import org.wso2.siddhi.core.util.config.ConfigReader;
 import org.wso2.siddhi.core.util.transport.OptionHolder;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.Map;
 
@@ -43,10 +41,8 @@ import java.util.Map;
 )
 public class TCPSource extends Source {
     private static final String CONTEXT = "context";
-
     private SourceEventListener sourceEventListener;
     private String context;
-    private StreamDefinition streamDefinition;
 
     @Override
     public void init(SourceEventListener sourceEventListener, OptionHolder optionHolder, ConfigReader configReader,
@@ -54,54 +50,42 @@ public class TCPSource extends Source {
         this.sourceEventListener = sourceEventListener;
         context = optionHolder.validateAndGetStaticValue(CONTEXT,
                 siddhiAppContext.getName() + "/" + sourceEventListener.getStreamDefinition().getId());
-        streamDefinition = StreamDefinition.id(context);
-        streamDefinition.getAttributeList().addAll(sourceEventListener.getStreamDefinition().getAttributeList());
     }
 
     @Override
     public void connect() throws ConnectionUnavailableException {
-        TCPServer.getInstance().start();
         TCPServer.getInstance().addStreamListener(new StreamListener() {
             @Override
-            public StreamDefinition getStreamDefinition() {
-                return streamDefinition;
+            public String getChannelId() {
+                return context;
             }
 
             @Override
-            public void onEvent(Event event) {
-                sourceEventListener.onEvent(event);
-            }
-
-            @Override
-            public void onEvents(Event[] events) {
-                sourceEventListener.onEvent(events);
-            }
-
-            @Override
-            public void onEvent(byte[] events) {
-
+            public void onMessage(byte[] message) {
+                sourceEventListener.onEvent(message);
             }
         });
+        TCPServer.getInstance().start();
     }
 
     @Override
     public void disconnect() {
-        TCPServer.getInstance().removeStreamListener(streamDefinition.getId());
-    }
-
-    @Override
-    public void destroy() {
+        TCPServer.getInstance().removeStreamListener(context);
         TCPServer.getInstance().stop();
     }
 
     @Override
+    public void destroy() {
+    }
+
+    @Override
     public void pause() {
-        TCPServer.getInstance().isPaused(true);
+        TCPServer.getInstance().pause();
     }
 
     @Override
     public void resume() {
-        TCPServer.getInstance().isPaused(false);
+        TCPServer.getInstance().resume();
     }
 
     @Override

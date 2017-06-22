@@ -15,12 +15,10 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.wso2.extension.siddhi.io.tcp.transport.converter;
+package org.wso2.extension.siddhi.io.tcp.transport.utils;
 
 
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.io.tcp.transport.exception.MalformedEventException;
-import org.wso2.extension.siddhi.io.tcp.transport.utils.BinaryMessageConverterUtil;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -31,8 +29,8 @@ import java.nio.ByteBuffer;
  * This class is a implementation EventConverter to create the event from the Binary message.
  * This is used within data bridge to create the event from the row message received.
  */
-public class SiddhiEventConverter1 {
-    static final Logger LOG = Logger.getLogger(SiddhiEventConverter1.class);
+public class SiddhiEventConverter {
+    static final Logger LOG = Logger.getLogger(SiddhiEventConverter.class);
 
     public static Event[] toConvertToSiddhiEvents(ByteBuffer messageBuffer, Attribute.Type[] attributeTypes) {
         try {
@@ -50,7 +48,7 @@ public class SiddhiEventConverter1 {
     }
 
     public static Event getEvent(ByteBuffer byteBuffer, Attribute.Type[] attributeTypes) throws
-            MalformedEventException, UnsupportedEncodingException {
+            UnsupportedEncodingException {
         Event event = new Event();
         long timeStamp = byteBuffer.getLong();
         event.setTimestamp(timeStamp);
@@ -61,9 +59,6 @@ public class SiddhiEventConverter1 {
     public static Object[] toObjectArray(ByteBuffer byteBuffer,
                                          Attribute.Type[] attributeTypeOrder) throws UnsupportedEncodingException {
         if (attributeTypeOrder != null) {
-            if (byteBuffer == null) {
-                throw new MalformedEventException("Received byte stream in null. Hence cannot convert to event");
-            }
             Object[] objects = new Object[attributeTypeOrder.length];
             for (int i = 0; i < attributeTypeOrder.length; i++) {
                 switch (attributeTypeOrder[i]) {
@@ -99,21 +94,5 @@ public class SiddhiEventConverter1 {
             return null;
         }
     }
-
-//    public Map<String, String> toStringMap(ByteBuffer byteBuffer) {
-//        if (byteBuffer != null) {
-//            Map<String, String> eventProps = new HashMap<String, String>();
-//
-//            while (byteBuffer.remaining() > 0) {
-//                int keySize = byteBuffer.getInt();
-//                String key = BinaryMessageConverterUtil.getString(byteBuffer, keySize);
-//                int valueSize = byteBuffer.getInt();
-//                String value = BinaryMessageConverterUtil.getString(byteBuffer, valueSize);
-//                eventProps.put(key, value);
-//            }
-//            return eventProps;
-//        }
-//        return null;
-//    }
 
 }

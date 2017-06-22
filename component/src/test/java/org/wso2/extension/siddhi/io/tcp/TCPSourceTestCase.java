@@ -526,7 +526,7 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test3", 361, 31.0f, 3801L, 231.0, false}));
         tcpNettyClient.send("inputStream", arrayList.toArray(new Event[2]));
         Thread.sleep(1000);
-        // once resumed, we should be able to access the data sent while the transport is paused
+        // once resumed, we should be able to access the data sent while the transport is pause
         AssertJUnit.assertEquals(5, count);
         AssertJUnit.assertTrue(eventArrived);
 
