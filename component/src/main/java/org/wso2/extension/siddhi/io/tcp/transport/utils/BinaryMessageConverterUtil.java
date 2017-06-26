@@ -101,4 +101,24 @@ public final class BinaryMessageConverterUtil {
         }
 
     }
+
+    public static void assignData(Object data, ByteBuffer eventDataBuffer) throws IOException {
+        if (data instanceof String) {
+            eventDataBuffer.putInt(((String) data).length());
+            eventDataBuffer.put((((String) data).getBytes(Constant.DEFAULT_CHARSET)));
+        } else if (data instanceof Integer) {
+            eventDataBuffer.putInt((Integer) data);
+        } else if (data instanceof Long) {
+            eventDataBuffer.putLong((Long) data);
+        } else if (data instanceof Float) {
+            eventDataBuffer.putFloat((Float) data);
+        } else if (data instanceof Double) {
+            eventDataBuffer.putDouble((Double) data);
+        } else if (data instanceof Boolean) {
+            eventDataBuffer.put((byte) (((Boolean) data) ? 1 : 0));
+        } else {
+            eventDataBuffer.putInt(0);
+        }
+
+    }
 }

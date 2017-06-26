@@ -23,8 +23,8 @@ import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
-import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
+import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
 import org.wso2.siddhi.core.stream.output.sink.Sink;
 import org.wso2.siddhi.core.util.config.ConfigReader;
 import org.wso2.siddhi.core.util.transport.DynamicOptions;
@@ -32,8 +32,11 @@ import org.wso2.siddhi.core.util.transport.Option;
 import org.wso2.siddhi.core.util.transport.OptionHolder;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Tcp sink extension.
@@ -46,56 +49,62 @@ import java.util.concurrent.atomic.AtomicBoolean;
 )
 public class TCPSink extends Sink {
 
-    public static final String HOST = "host";
-    public static final String PORT = "port";
-    public static final String CONTEXT = "context";
+    public static final String URL = "url";
+    public static final String SYNC = "sync";
     private static final Logger log = Logger.getLogger(TCPSink.class);
     private TCPNettyClient tcpNettyClient;
     private String host;
     private int port;
-    private Option streamIdOption;
-    private AtomicBoolean connected = new AtomicBoolean(false);
+    private String channelId;
+    private Option syncOption;
 
     @Override
     public String[] getSupportedDynamicOptions() {
-        return new String[]{CONTEXT};
+        return new String[]{SYNC};
     }
 
     @Override
     protected void init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
                         ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
         tcpNettyClient = new TCPNettyClient();
-        host = optionHolder.validateAndGetStaticValue(HOST, "localhost");
-        port = Integer.parseInt(optionHolder.validateAndGetStaticValue(PORT, "9892"));
-        streamIdOption = optionHolder.validateAndGetOption(CONTEXT);
+        String url = optionHolder.validateAndGetStaticValue(URL);
+        syncOption = optionHolder.getOrCreateOption(SYNC, "false");
+        try {
+            if (!url.startsWith("tcp:")) {
+                throw new SiddhiAppCreationException("Malformed url '" + url + "' with wrong protocol found, " +
+                        "expected in format 'tcp://<host>:<port>/<context>'");
+            }
+            URL aURL = new URL(url.replaceFirst("tcp", "http"));
+            host = aURL.getHost();
+            port = aURL.getPort();
+            channelId = aURL.getPath().substring(1);
+        } catch (MalformedURLException e) {
+            throw new SiddhiAppCreationException("Malformed url '" + url + "' found, expected in format " +
+                    "'tcp://<host>:<port>/<context>'", e);
+        }
+
     }
 
     @Override
     public void connect() throws ConnectionUnavailableException {
-
+        tcpNettyClient.connect(host, port);
     }
 
     @Override
     public void publish(Object payload, DynamicOptions dynamicOptions) throws ConnectionUnavailableException {
-        if (connected.compareAndSet(false, true)) {
-            log.info("TCPSink:connect()");
-            tcpNettyClient.connect(host, port);
-        }
-        String streamId = streamIdOption.getValue(dynamicOptions);
-        if (payload instanceof Event) {
-            tcpNettyClient.send(streamId, new Event[]{(Event) payload});
+        if (payload instanceof String) {
+            tcpNettyClient.send(channelId, ((String) payload).getBytes(Charset.defaultCharset()));
+        } else if (payload instanceof ByteBuffer) {
+            tcpNettyClient.send(channelId, ((ByteBuffer) payload).array());
         } else {
-            tcpNettyClient.send(streamId, (Event[]) payload);
+            tcpNettyClient.send(channelId, (byte[]) payload);
         }
     }
 
     @Override
     public void disconnect() {
-        if (connected.compareAndSet(true, false)) {
-            if (tcpNettyClient != null) {
-                log.info("TCPSink:disconnect()");
-                tcpNettyClient.disconnect();
-            }
+        if (tcpNettyClient != null) {
+            tcpNettyClient.disconnect();
         }
     }
 

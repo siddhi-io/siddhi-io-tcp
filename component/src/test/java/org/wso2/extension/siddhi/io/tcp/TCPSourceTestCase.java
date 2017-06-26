@@ -23,6 +23,8 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
+import org.wso2.extension.siddhi.map.binary.sinkmapper.BinaryEventConverter;
+import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
@@ -31,7 +33,9 @@ import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.source.Source;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.EventPrinter;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -53,13 +57,13 @@ public class TCPSourceTestCase {
 
 
     @Test
-    public void testTcpSource1() throws InterruptedException {
+    public void testTcpSource1() throws InterruptedException, IOException {
         LOG.info("tcpSource TestCase 1");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
                 "@app:name('foo')" +
-                "@source(type='tcp', @map(type='passThrough'))" +
+                "@source(type='tcp', @map(type='binary'))" +
                 "define stream inputStream (a string, b int, c float, d long, e double, f bool);";
         String query = ("@info(name = 'query1') " +
                 "from inputStream " +
@@ -67,6 +71,11 @@ public class TCPSourceTestCase {
                 "insert into outputStream;");
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition +
                 query);
+
+
+        Attribute.Type[] types = EventDefinitionConverterUtil.generateAttributeTypeArray(siddhiAppRuntime
+                .getStreamDefinitionMap().get("inputStream").getAttributeList());
+
 
         siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
@@ -101,7 +110,12 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("foo/inputStream", arrayList.toArray(new Event[3]));
+        try {
+            tcpNettyClient.send("foo/inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
 
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();
@@ -114,14 +128,14 @@ public class TCPSourceTestCase {
     }
 
 
-    @Test
+    @Test(dependsOnMethods = "testTcpSource1")
     public void testTcpSource2() throws InterruptedException {
         LOG.info("tcpSource TestCase 2");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
                 "@app:name('foo')" +
-                "@source(type='tcp', context='bar', @map(type='passThrough'))" +
+                "@source(type='tcp', context='bar', @map(type='binary'))" +
                 "define stream inputStream (a string, b int, c float, d long, e double, f bool);";
         String query = ("@info(name = 'query1') " +
                 "from inputStream " +
@@ -129,6 +143,9 @@ public class TCPSourceTestCase {
                 "insert into outputStream;");
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition +
                 query);
+
+        Attribute.Type[] types = EventDefinitionConverterUtil.generateAttributeTypeArray(siddhiAppRuntime
+                .getStreamDefinitionMap().get("inputStream").getAttributeList());
 
         siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
@@ -163,7 +180,12 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("bar", arrayList.toArray(new Event[3]));
+        try {
+            tcpNettyClient.send("bar", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
 
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();
@@ -175,7 +197,7 @@ public class TCPSourceTestCase {
 
     }
 
-    @Test
+    @Test(dependsOnMethods = "testTcpSource2")
     public void testTcpSource3() throws InterruptedException {
         LOG.info("tcpSource TestCase 3");
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -191,6 +213,9 @@ public class TCPSourceTestCase {
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition +
                 query);
 
+        Attribute.Type[] types = EventDefinitionConverterUtil.generateAttributeTypeArray(siddhiAppRuntime
+                .getStreamDefinitionMap().get("inputStream").getAttributeList());
+
         siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
@@ -208,7 +233,12 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("bar", arrayList.toArray(new Event[3]));
+        try {
+            tcpNettyClient.send("bar", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
 
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();
@@ -218,7 +248,7 @@ public class TCPSourceTestCase {
         siddhiAppRuntime.shutdown();
     }
 
-    @Test
+    @Test(dependsOnMethods = "testTcpSource3")
     public void testTcpSource4() throws InterruptedException {
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {
@@ -246,14 +276,14 @@ public class TCPSourceTestCase {
         }
     }
 
-    @Test
+    @Test(dependsOnMethods = "testTcpSource4")
     public void testTcpSource5() throws InterruptedException {
         LOG.info("tcpSource TestCase 5");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
                 "@app:name('foo')" +
-                "@source(type='tcp')" +
+                "@source(type='tcp', @map(type='binary'))" +
                 "define stream inputStream (a string, b int, c float, d long, e double, f bool);";
         String query = ("@info(name = 'query1') " +
                 "from inputStream " +
@@ -261,6 +291,9 @@ public class TCPSourceTestCase {
                 "insert into outputStream;");
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition +
                 query);
+
+        Attribute.Type[] types = EventDefinitionConverterUtil.generateAttributeTypeArray(siddhiAppRuntime
+                .getStreamDefinitionMap().get("inputStream").getAttributeList());
 
         siddhiAppRuntime.addCallback("query1", new QueryCallback() {
             @Override
@@ -295,8 +328,12 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("foo/inputStream", arrayList.toArray(new Event[3]));
-
+        try {
+            tcpNettyClient.send("foo/inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();
         Thread.sleep(300);
@@ -307,7 +344,7 @@ public class TCPSourceTestCase {
 
     }
 
-    @Test(expectedExceptions = SiddhiAppCreationException.class)
+    @Test(expectedExceptions = SiddhiAppCreationException.class, dependsOnMethods = "testTcpSource5")
     public void testTcpSource6() throws InterruptedException {
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {
@@ -332,16 +369,16 @@ public class TCPSourceTestCase {
         }
     }
 
-    @Test
+    @Test(dependsOnMethods = "testTcpSource6")
     public void testTcpSource7() throws InterruptedException {
         LOG.info("tcpSource TestCase 7");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
                 "@app:name('foo')" +
-                "@source(type='tcp', context='bar', @map(type='passThrough'))" +
+                "@source(type='tcp', context='bar', @map(type='binary'))" +
                 "define stream inputStream (a string, b int, c float, d long, e double, f bool);" +
-                "@source(type='tcp', context='bar1', @map(type='passThrough'))" +
+                "@source(type='tcp', context='bar1', @map(type='binary'))" +
                 "define stream inputStream1 (a string, b int, c float, d long, e double, f bool);" +
                 "";
         String query = ("@info(name = 'query1') " +
@@ -355,6 +392,9 @@ public class TCPSourceTestCase {
                 "");
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition +
                 query);
+
+        Attribute.Type[] types = EventDefinitionConverterUtil.generateAttributeTypeArray(siddhiAppRuntime
+                .getStreamDefinitionMap().get("inputStream").getAttributeList());
 
         siddhiAppRuntime.addCallback("outputStream", new StreamCallback() {
             @Override
@@ -399,8 +439,15 @@ public class TCPSourceTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("bar", arrayList.toArray(new Event[3]));
-        tcpNettyClient.send("bar1", arrayList.toArray(new Event[3]));
+
+        try {
+            tcpNettyClient.send("bar", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+            tcpNettyClient.send("bar1", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
 
         tcpNettyClient.disconnect();
         tcpNettyClient.shutdown();
@@ -412,7 +459,7 @@ public class TCPSourceTestCase {
 
     }
 
-    @Test(enabled = false)//(expected = SiddhiAppCreationException.class)
+    @Test
     public void testTcpSource8() throws InterruptedException {
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {
@@ -438,21 +485,24 @@ public class TCPSourceTestCase {
         }
     }
 
-    @Test(enabled = false)
+    @Test
     public void testTcpSourcePauseAndResume() throws InterruptedException {
         init();
         LOG.info("tcpSource TestCase PauseAndResume");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
-                "@source(type='tcp', context='inputStream', @map(type='passThrough'))" +
+                "@source(type='tcp', context='inputStream', @map(type='binary'))" +
                 "define stream inputStream (a string, b int, c float, d long, e double, f bool);";
         String query = ("@info(name = 'query1') " +
                 "from inputStream " +
                 "select *  " +
                 "insert into outputStream;");
-        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition +
-                query);
+        SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition + query);
+
+        Attribute.Type[] types = EventDefinitionConverterUtil.generateAttributeTypeArray(siddhiAppRuntime
+                .getStreamDefinitionMap().get("inputStream").getAttributeList());
+
         Collection<List<Source>> sources = siddhiAppRuntime.getSources();
 
         siddhiAppRuntime.addCallback("query1", new QueryCallback() {
@@ -482,26 +532,35 @@ public class TCPSourceTestCase {
 
         TCPNettyClient tcpNettyClient = new TCPNettyClient();
         tcpNettyClient.connect("localhost", 9892);
-        ArrayList<Event> arrayList = new ArrayList<Event>(3);
 
+        ArrayList<Event> arrayList = new ArrayList<Event>(3);
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
-        tcpNettyClient.send("inputStream", arrayList.toArray(new Event[3]));
+        try {
+            tcpNettyClient.send("inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[3]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
 
         TCPNettyClient tcpNettyClient2 = new TCPNettyClient();
         tcpNettyClient2.connect("localhost", 9892);
-        ArrayList<Event> arrayList2 = new ArrayList<Event>(1);
 
+        ArrayList<Event> arrayList2 = new ArrayList<Event>(1);
         arrayList2.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 36, 3.0f, 380L, 23.0, true}));
         Thread.sleep(1000);
-        tcpNettyClient2.send("inputStream", arrayList2.toArray(new Event[1]));
-
+        try {
+            tcpNettyClient2.send("inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList2.toArray(new Event[1]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
 
         Thread.sleep(1000);
         AssertJUnit.assertTrue(eventArrived);
         AssertJUnit.assertEquals(4, count);
-        count = 0;
+        count = 3;
         eventArrived = false;
 
         // pause
@@ -511,11 +570,21 @@ public class TCPSourceTestCase {
         arrayList.clear();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
-        tcpNettyClient.send("inputStream", arrayList.toArray(new Event[2]));
-        Thread.sleep(100);
-        tcpNettyClient2.send("inputStream", arrayList2.toArray(new Event[1]));
-
+        try {
+            tcpNettyClient.send("inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[2]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
         Thread.sleep(1000);
+        try {
+            tcpNettyClient2.send("inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList2.toArray(new Event[1]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+
+        Thread.sleep(100);
         AssertJUnit.assertFalse(eventArrived);
 
         // resume
@@ -524,10 +593,15 @@ public class TCPSourceTestCase {
         arrayList.clear();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test3", 361, 31.0f, 3801L, 231.0, false}));
-        tcpNettyClient.send("inputStream", arrayList.toArray(new Event[2]));
+        try {
+            tcpNettyClient.send("inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[2]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
         Thread.sleep(1000);
-        // once resumed, we should be able to access the data sent while the transport is paused
-        AssertJUnit.assertEquals(5, count);
+        // once resumed, we should be able to access the data sent while the transport is pause
+        AssertJUnit.assertEquals(8, count);
         AssertJUnit.assertTrue(eventArrived);
 
         count = 0;
@@ -536,8 +610,12 @@ public class TCPSourceTestCase {
         arrayList.clear();
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test", 36, 3.0f, 380L, 23.0, true}));
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test1", 361, 31.0f, 3801L, 231.0, false}));
-        tcpNettyClient.send("inputStream", arrayList.toArray(new Event[2]));
-
+        try {
+            tcpNettyClient.send("inputStream", BinaryEventConverter.convertToBinaryMessage(
+                    arrayList.toArray(new Event[2]), types).array()).await();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
         Thread.sleep(1000);
         AssertJUnit.assertEquals(2, count);
 

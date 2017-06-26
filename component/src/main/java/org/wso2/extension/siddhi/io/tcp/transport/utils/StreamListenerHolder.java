@@ -27,26 +27,26 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Event stream data type holder.
  */
-public class StreamTypeHolder {
-    private Map<String, StreamInfo> streamInfoMap = new ConcurrentHashMap<String, StreamInfo>();
+public class StreamListenerHolder {
+    private Map<String, StreamListener> streamListenerMap = new ConcurrentHashMap<String, StreamListener>();
 
-    public StreamInfo getStreamInfo(String streamId) {
-        return streamInfoMap.get(streamId);
+    public StreamListener getStreamListener(String streamId) {
+        return streamListenerMap.get(streamId);
     }
 
     public void putStreamCallback(StreamListener streamListener) {
-        if (this.streamInfoMap.containsKey(streamListener.getStreamDefinition().getId())) {
-            throw new SiddhiAppCreationException("TCP source with name '" + streamListener.getStreamDefinition()
-                    .getId() + "' already defined !");
+        if (this.streamListenerMap.containsKey(streamListener.getChannelId())) {
+            throw new SiddhiAppCreationException("TCP source for channelId '" + streamListener.getChannelId()
+                    + "' already defined !");
         }
-        this.streamInfoMap.put(streamListener.getStreamDefinition().getId(), new StreamInfo(streamListener));
+        this.streamListenerMap.put(streamListener.getChannelId(), streamListener);
     }
 
     public void removeStreamCallback(String streamId) {
-        this.streamInfoMap.remove(streamId);
+        this.streamListenerMap.remove(streamId);
     }
 
     public int getNoOfRegisteredStreamListeners() {
-        return streamInfoMap.size();
+        return streamListenerMap.size();
     }
 }

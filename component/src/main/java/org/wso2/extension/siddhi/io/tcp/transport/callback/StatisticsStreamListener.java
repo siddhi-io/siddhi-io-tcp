@@ -19,12 +19,16 @@
 package org.wso2.extension.siddhi.io.tcp.transport.callback;
 
 import org.apache.log4j.Logger;
+import org.wso2.extension.siddhi.map.binary.sourcemapper.SiddhiEventConverter;
+import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,27 +48,38 @@ public class StatisticsStreamListener implements StreamListener {
     private AtomicLong counter = new AtomicLong(0);
     private AtomicBoolean calcInProgress = new AtomicBoolean(false);
     private DecimalFormat decimalFormat = new DecimalFormat("#.#####");
-    private int elapsedCount = 100000;
+    private int elapsedCount = 1000000;
     private PrintWriter writer = null;
     private StreamDefinition streamDefinition;
+    private Attribute.Type[] types;
 
     public StatisticsStreamListener(StreamDefinition streamDefinition) {
         this.streamDefinition = streamDefinition;
+        types = EventDefinitionConverterUtil.generateAttributeTypeArray(streamDefinition
+                .getAttributeList());
     }
 
     @Override
-    public StreamDefinition getStreamDefinition() {
-        return streamDefinition;
+    public String getChannelId() {
+        return streamDefinition.getId();
     }
 
     @Override
-    public void onEvent(Event event) {
-//        log.info(event);
+    public void onMessage(byte[] message) {
+        onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+    }
 
+    private void onEvents(Event[] events) {
+        for (Event event : events) {
+            onEvent(event);
+        }
+    }
+
+    private void onEvent(Event event) {
         try {
             long currentBatchTotalDelay = 0;
             long currentTime = System.currentTimeMillis();
-            long currentEventLatency = currentTime - event.getTimestamp();
+            long currentEventLatency = System.currentTimeMillis() - event.getTimestamp();
 
             long currentMaxLatency = maxLatency.get();
             if (currentEventLatency > currentMaxLatency) {
@@ -105,15 +120,6 @@ public class StatisticsStreamListener implements StreamListener {
             }
         } catch (Exception e) {
             log.info("Error while consuming event on " + streamDefinition.getId() + ", " + e.getMessage());
-        } finally {
-            //channelHandlerContext.close();
-        }
-    }
-
-    @Override
-    public void onEvents(Event[] events) {
-        for (Event event : events) {
-            onEvent(event);
         }
     }
 
@@ -131,6 +137,5 @@ public class StatisticsStreamListener implements StreamListener {
         writer.println(data);
         writer.flush();
     }
-
 
 }

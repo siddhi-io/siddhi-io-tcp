@@ -41,7 +41,7 @@ public class TCPServer {
     public synchronized void start() {
         if (tcpNettyServer == null) {
             tcpNettyServer = new TCPNettyServer();
-            tcpNettyServer.bootServer(new ServerConfig());
+            tcpNettyServer.start(new ServerConfig());
         }
     }
 
@@ -66,7 +66,11 @@ public class TCPServer {
         }
     }
 
-    public void isPaused(boolean paused) {
-        tcpNettyServer.isPaused(paused);
+    public void pause() {
+        tcpNettyServer.pause();
+    }
+
+    public void resume() {
+        tcpNettyServer.resume();
     }
 }
