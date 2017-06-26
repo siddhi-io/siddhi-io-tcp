@@ -19,6 +19,8 @@
 package org.wso2.extension.siddhi.io.tcp.source;
 
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
+import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
+import org.wso2.extension.siddhi.io.tcp.transport.utils.Constant;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
@@ -40,9 +42,18 @@ import java.util.Map;
         examples = @Example(description = "TBD", syntax = "TBD")
 )
 public class TCPSource extends Source {
+
+    public static final String RECEIVER_THREADS = "receiver.threads";
+    public static final String WORKER_THREADS = "worker.threads";
+    public static final String PORT = "port";
+    public static final String HOST = "host";
+    public static final String TCP_NO_DELAY = "tcp.no.delay";
+    public static final String KEEP_ALIVE = "keep.alive";
     private static final String CONTEXT = "context";
     private SourceEventListener sourceEventListener;
     private String context;
+    private ServerConfig serverConfig;
+
 
     @Override
     public void init(SourceEventListener sourceEventListener, OptionHolder optionHolder, ConfigReader configReader,
@@ -50,6 +61,18 @@ public class TCPSource extends Source {
         this.sourceEventListener = sourceEventListener;
         context = optionHolder.validateAndGetStaticValue(CONTEXT,
                 siddhiAppContext.getName() + "/" + sourceEventListener.getStreamDefinition().getId());
+
+        serverConfig = new ServerConfig();
+        serverConfig.setHost(configReader.readConfig(HOST, Constant.DEFAULT_HOST));
+        serverConfig.setPort(Integer.parseInt(configReader.readConfig(PORT, "" + Constant.DEFAULT_PORT)));
+        serverConfig.setKeepAlive(Boolean.parseBoolean((configReader.readConfig(KEEP_ALIVE, "" + Constant
+                .DEFAULT_KEEP_ALIVE))));
+        serverConfig.setTcpNoDelay(Boolean.parseBoolean((configReader.readConfig(TCP_NO_DELAY, "" + Constant
+                .DEFAULT_TCP_NO_DELAY))));
+        serverConfig.setReceiverThreads(Integer.parseInt((configReader.readConfig(RECEIVER_THREADS, "" + Constant
+                .DEFAULT_RECEIVER_THREADS))));
+        serverConfig.setWorkerThreads(Integer.parseInt((configReader.readConfig(WORKER_THREADS, "" + Constant
+                .DEFAULT_WORKER_THREADS))));
     }
 
     @Override
@@ -65,7 +88,7 @@ public class TCPSource extends Source {
                 sourceEventListener.onEvent(message);
             }
         });
-        TCPServer.getInstance().start();
+        TCPServer.getInstance().start(serverConfig);
     }
 
     @Override
