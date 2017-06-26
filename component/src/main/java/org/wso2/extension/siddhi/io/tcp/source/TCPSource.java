@@ -43,12 +43,12 @@ import java.util.Map;
 )
 public class TCPSource extends Source {
 
-    public static final String RECEIVER_THREADS = "receiver.threads";
-    public static final String WORKER_THREADS = "worker.threads";
-    public static final String PORT = "port";
-    public static final String HOST = "host";
-    public static final String TCP_NO_DELAY = "tcp.no.delay";
-    public static final String KEEP_ALIVE = "keep.alive";
+    private static final String RECEIVER_THREADS = "receiver.threads";
+    private static final String WORKER_THREADS = "worker.threads";
+    private static final String PORT = "port";
+    private static final String HOST = "host";
+    private static final String TCP_NO_DELAY = "tcp.no.delay";
+    private static final String KEEP_ALIVE = "keep.alive";
     private static final String CONTEXT = "context";
     private SourceEventListener sourceEventListener;
     private String context;

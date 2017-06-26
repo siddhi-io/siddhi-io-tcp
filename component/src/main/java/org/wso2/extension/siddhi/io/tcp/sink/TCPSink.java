@@ -49,14 +49,14 @@ import java.util.Map;
 )
 public class TCPSink extends Sink {
 
-    public static final String TCP_NO_DELAY = "tcp.no.delay";
-    public static final String KEEP_ALIVE = "keep.alive";
-    public static final String WORKER_THREADS = "worker.threads";
-    public static final String DEFAULT_TCP_NO_DELAY = "true";
-    public static final String DEFAULT_KEEP_ALIVE = "true";
-    public static final String DEFAULT_WORKER_THREADS = "0";
-    public static final String URL = "url";
-    public static final String SYNC = "sync";
+    private static final String TCP_NO_DELAY = "tcp.no.delay";
+    private static final String KEEP_ALIVE = "keep.alive";
+    private static final String WORKER_THREADS = "worker.threads";
+    private static final String DEFAULT_TCP_NO_DELAY = "true";
+    private static final String DEFAULT_KEEP_ALIVE = "true";
+    private static final String DEFAULT_WORKER_THREADS = "0";
+    private static final String URL = "url";
+    private static final String SYNC = "sync";
     private static final Logger log = Logger.getLogger(TCPSink.class);
     private TCPNettyClient tcpNettyClient;
     private String host;
