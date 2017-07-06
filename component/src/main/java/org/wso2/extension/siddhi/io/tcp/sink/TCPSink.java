@@ -114,6 +114,8 @@ public class TCPSink extends Sink {
     @Override
     public void connect() throws ConnectionUnavailableException {
         tcpNettyClient.connect(host, port);
+        log.info("'tcp' sink at '" + getStreamDefinition().getId() + "' stream successfully connected to '" +
+                hostAndPort + "'.");
     }
 
     @Override
