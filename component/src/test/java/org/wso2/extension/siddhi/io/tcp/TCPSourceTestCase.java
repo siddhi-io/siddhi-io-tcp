@@ -28,6 +28,7 @@ import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.source.Source;
@@ -57,7 +58,7 @@ public class TCPSourceTestCase {
 
 
     @Test
-    public void testTcpSource1() throws InterruptedException, IOException {
+    public void testTcpSource1() throws InterruptedException, IOException, ConnectionUnavailableException {
         LOG.info("tcpSource TestCase 1");
         SiddhiManager siddhiManager = new SiddhiManager();
 
@@ -129,7 +130,7 @@ public class TCPSourceTestCase {
 
 
     @Test(dependsOnMethods = "testTcpSource1")
-    public void testTcpSource2() throws InterruptedException {
+    public void testTcpSource2() throws InterruptedException, ConnectionUnavailableException {
         LOG.info("tcpSource TestCase 2");
         SiddhiManager siddhiManager = new SiddhiManager();
 
@@ -198,7 +199,7 @@ public class TCPSourceTestCase {
     }
 
     @Test(dependsOnMethods = "testTcpSource2")
-    public void testTcpSource3() throws InterruptedException {
+    public void testTcpSource3() throws InterruptedException, ConnectionUnavailableException {
         LOG.info("tcpSource TestCase 3");
         SiddhiManager siddhiManager = new SiddhiManager();
 
@@ -277,7 +278,7 @@ public class TCPSourceTestCase {
     }
 
     @Test(dependsOnMethods = "testTcpSource4")
-    public void testTcpSource5() throws InterruptedException {
+    public void testTcpSource5() throws InterruptedException, ConnectionUnavailableException {
         LOG.info("tcpSource TestCase 5");
         SiddhiManager siddhiManager = new SiddhiManager();
 
@@ -370,7 +371,7 @@ public class TCPSourceTestCase {
     }
 
     @Test(dependsOnMethods = "testTcpSource6")
-    public void testTcpSource7() throws InterruptedException {
+    public void testTcpSource7() throws InterruptedException, ConnectionUnavailableException {
         LOG.info("tcpSource TestCase 7");
         SiddhiManager siddhiManager = new SiddhiManager();
 
@@ -486,7 +487,7 @@ public class TCPSourceTestCase {
     }
 
     @Test
-    public void testTcpSourcePauseAndResume() throws InterruptedException {
+    public void testTcpSourcePauseAndResume() throws InterruptedException, ConnectionUnavailableException {
         init();
         LOG.info("tcpSource TestCase PauseAndResume");
         SiddhiManager siddhiManager = new SiddhiManager();

@@ -19,11 +19,7 @@ package org.wso2.extension.siddhi.io.tcp.transport.utils;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 
 /**
  * Util helping to convert from Siddhi Event to byte message.
@@ -34,91 +30,9 @@ public final class BinaryMessageConverterUtil {
 
     }
 
-    public static byte[] loadData(InputStream in, byte[] dataArray) throws IOException {
-
-        int start = 0;
-        while (true) {
-            int readCount = in.read(dataArray, start, dataArray.length - start);
-            if (readCount != -1) {
-                start += readCount;
-                if (start == dataArray.length) {
-                    return dataArray;
-                }
-            } else {
-                throw new EOFException("Connection closed from remote end.");
-            }
-        }
-    }
-
-    public static String getString(ByteBuffer byteBuffer, int size) throws UnsupportedEncodingException {
-
-        byte[] bytes = new byte[size];
-        byteBuffer.get(bytes);
-        return new String(bytes, Constant.DEFAULT_CHARSET);
-    }
-
     public static String getString(ByteBuf byteBuffer, int size) throws UnsupportedEncodingException {
         byte[] bytes = new byte[size];
         byteBuffer.readBytes(bytes);
         return new String(bytes, Constant.DEFAULT_CHARSET);
-    }
-
-    public static int getSize(Object data) {
-        if (data instanceof String) {
-            return 4 + ((String) data).length();
-        } else if (data instanceof Integer) {
-            return 4;
-        } else if (data instanceof Long) {
-            return 8;
-        } else if (data instanceof Float) {
-            return 4;
-        } else if (data instanceof Double) {
-            return 8;
-        } else if (data instanceof Boolean) {
-            return 1;
-        } else {
-            return 4;
-        }
-    }
-
-
-    public static void assignData(Object data, ByteBuf eventDataBuffer) throws IOException {
-        if (data instanceof String) {
-            eventDataBuffer.writeInt(((String) data).length());
-            eventDataBuffer.writeBytes((((String) data).getBytes(Constant.DEFAULT_CHARSET)));
-        } else if (data instanceof Integer) {
-            eventDataBuffer.writeInt((Integer) data);
-        } else if (data instanceof Long) {
-            eventDataBuffer.writeLong((Long) data);
-        } else if (data instanceof Float) {
-            eventDataBuffer.writeFloat((Float) data);
-        } else if (data instanceof Double) {
-            eventDataBuffer.writeDouble((Double) data);
-        } else if (data instanceof Boolean) {
-            eventDataBuffer.writeByte((byte) (((Boolean) data) ? 1 : 0));
-        } else {
-            eventDataBuffer.writeInt(0);
-        }
-
-    }
-
-    public static void assignData(Object data, ByteBuffer eventDataBuffer) throws IOException {
-        if (data instanceof String) {
-            eventDataBuffer.putInt(((String) data).length());
-            eventDataBuffer.put((((String) data).getBytes(Constant.DEFAULT_CHARSET)));
-        } else if (data instanceof Integer) {
-            eventDataBuffer.putInt((Integer) data);
-        } else if (data instanceof Long) {
-            eventDataBuffer.putLong((Long) data);
-        } else if (data instanceof Float) {
-            eventDataBuffer.putFloat((Float) data);
-        } else if (data instanceof Double) {
-            eventDataBuffer.putDouble((Double) data);
-        } else if (data instanceof Boolean) {
-            eventDataBuffer.put((byte) (((Boolean) data) ? 1 : 0));
-        } else {
-            eventDataBuffer.putInt(0);
-        }
-
     }
 }

@@ -718,15 +718,15 @@ public class TCPSinkTestCase {
 
     }
 
-    //Todo need to implement retry
-    @Test(enabled = false)//(dependsOnMethods = {"testTcpSink15"})
+
+    @Test//(dependsOnMethods = {"testTcpSink15"})
     public void testTcpSink16() throws InterruptedException {
         LOG.info("tcpSink TestCase 16");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         String inStreamDefinition = "" +
                 "define stream inputStream (a string, b int, c float, d long, e double, f bool); " +
-                "@sink(type='tcp', url='tcp://127.0.0.1:9892/foo', @map(type='binary')) " +
+                "@sink(type='tcp', url='tcp://127.0.0.1:9892/foo', sync='true', @map(type='binary')) " +
                 "define stream outputStream (a string, b int, c float, d long, e double, f bool);";
         String query = ("@info(name = 'query1') " +
                 "from inputStream " +
@@ -783,7 +783,6 @@ public class TCPSinkTestCase {
 
         siddhiAppRuntime.start();
         Thread.sleep(2000);
-        tcpNettyServer.start(new ServerConfig());
 
         InputHandler inputHandler = siddhiAppRuntime.getInputHandler("inputStream");
 
@@ -793,13 +792,34 @@ public class TCPSinkTestCase {
         arrayList.add(new Event(System.currentTimeMillis(), new Object[]{"test2", 362, 32.0f, 3802L, 232.0, true}));
         inputHandler.send(arrayList.toArray(new Event[3]));
 
-        Thread.sleep(300);
+        tcpNettyServer.start(new ServerConfig());
 
+        Thread.sleep(5000);
+        inputHandler.send(arrayList.toArray(new Event[3]));
+
+        Thread.sleep(300);
         AssertJUnit.assertEquals(3, count);
         AssertJUnit.assertTrue(eventArrived);
-        siddhiAppRuntime.shutdown();
         tcpNettyServer.shutdownGracefully();
 
+        eventArrived = false;
+        count = 0;
+
+        Thread.sleep(500);
+        inputHandler.send(arrayList.toArray(new Event[3]));
+
+        tcpNettyServer.start(new ServerConfig());
+
+        AssertJUnit.assertFalse(eventArrived);
+        Thread.sleep(7000);
+        inputHandler.send(arrayList.toArray(new Event[3]));
+
+        Thread.sleep(300);
+        AssertJUnit.assertEquals(3, count);
+        AssertJUnit.assertTrue(eventArrived);
+        tcpNettyServer.shutdownGracefully();
+
+        siddhiAppRuntime.shutdown();
     }
 
 }
