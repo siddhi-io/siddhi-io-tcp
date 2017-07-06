@@ -18,6 +18,8 @@
 
 package org.wso2.extension.siddhi.io.tcp.sink;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
 import org.wso2.siddhi.annotation.Example;
@@ -64,6 +66,7 @@ public class TCPSink extends Sink {
     private String channelId;
     private Option syncOption;
     private Boolean sync = null;
+    private String hostAndPort;
 
     @Override
     protected void init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
@@ -81,6 +84,7 @@ public class TCPSink extends Sink {
             URL aURL = new URL(url.replaceFirst("tcp", "http"));
             host = aURL.getHost();
             port = aURL.getPort();
+            hostAndPort = host + ":" + port;
             channelId = aURL.getPath().substring(1);
         } catch (MalformedURLException e) {
             throw new SiddhiAppCreationException("Malformed url '" + url + "' found, expected in format " +
@@ -114,28 +118,54 @@ public class TCPSink extends Sink {
 
     @Override
     public void publish(Object payload, DynamicOptions dynamicOptions) throws ConnectionUnavailableException {
-        byte[] message;
-        if (payload instanceof String) {
-            message = ((String) payload).getBytes(Charset.defaultCharset());
-        } else if (payload instanceof ByteBuffer) {
-            message = ((ByteBuffer) payload).array();
-        } else {
-            message = (byte[]) payload;
-        }
-        boolean isSync;
-        if (sync != null) {
-            isSync = sync;
-        } else {
-            isSync = Boolean.parseBoolean(syncOption.getValue(dynamicOptions));
-        }
-        if (isSync) {
-            try {
-                tcpNettyClient.send(channelId, message).sync();
-            } catch (InterruptedException e) {
-                throw new ConnectionUnavailableException(e.getMessage(), e);
+        try {
+            byte[] message;
+            if (payload instanceof String) {
+                message = ((String) payload).getBytes(Charset.defaultCharset());
+            } else if (payload instanceof ByteBuffer) {
+                message = ((ByteBuffer) payload).array();
+            } else {
+                message = (byte[]) payload;
             }
-        } else {
-            tcpNettyClient.send(channelId, message);
+            boolean isSync;
+            if (sync != null) {
+                isSync = sync;
+            } else {
+                isSync = Boolean.parseBoolean(syncOption.getValue(dynamicOptions));
+            }
+            if (isSync) {
+                try {
+                    ChannelFuture future = tcpNettyClient.send(channelId, message);
+                    future.sync();
+                    if (!future.isSuccess()) {
+                        throw new ConnectionUnavailableException("Error sending events to '" + hostAndPort +
+                                "' on channel '" + channelId + "', " + hostAndPort + ", " +
+                                future.cause().getMessage(), future.cause());
+                    }
+                } catch (InterruptedException e) {
+                    throw new ConnectionUnavailableException("Error sending events to '" + hostAndPort +
+                            "' on channel '" + channelId + "', " + hostAndPort + ", " + e.getMessage(), e);
+                }
+            } else {
+                ChannelFuture future = tcpNettyClient.send(channelId, message);
+                future.addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            log.error("Error sending events to '" + hostAndPort + "' on channel '" +
+                                    channelId + "', " + future.cause() + ", dropping events ", future.cause());
+                        }
+                    }
+                });
+                if (future.isDone() && !future.isSuccess()) {
+                    throw new ConnectionUnavailableException("Error sending events to '" + hostAndPort +
+                            "' on channel '" + channelId + "', " + hostAndPort + ", " + future.cause().getMessage(),
+                            future.cause());
+                }
+            }
+        } catch (Throwable t) {
+            throw new ConnectionUnavailableException("Error sending events to '" + hostAndPort + "' on channel '" +
+                    channelId + "', " + hostAndPort + ", " + t.getMessage(), t);
         }
     }
 

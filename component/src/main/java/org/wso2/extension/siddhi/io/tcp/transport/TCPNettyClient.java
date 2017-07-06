@@ -20,7 +20,6 @@ package org.wso2.extension.siddhi.io.tcp.transport;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -31,6 +30,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageEncoder;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite;
+import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 
 import java.util.UUID;
 
@@ -72,29 +72,20 @@ public class TCPNettyClient {
                 });
     }
 
-    public void connect(String host, int port) {
+    public void connect(String host, int port) throws ConnectionUnavailableException {
         // Start the connection attempt.
         try {
             hostAndPort = host + ":" + port;
             channel = bootstrap.connect(host, port).sync().channel();
             sessionId = UUID.randomUUID() + "-" + hostAndPort;
-        } catch (InterruptedException e) {
-            log.error("Error connecting to '" + hostAndPort + "', " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ConnectionUnavailableException("Error connecting to '" + hostAndPort + "', " + e.getMessage(), e);
         }
     }
 
     public ChannelFuture send(final String channelId, final byte[] message) {
         EventComposite eventComposite = new EventComposite(sessionId, channelId, message);
         ChannelFuture cf = channel.writeAndFlush(eventComposite);
-        cf.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (!future.isSuccess()) {
-                    log.error("Error sending events to '" + hostAndPort + "' on channel '" + channelId +
-                            "', " + future.cause() + ", dropping events ", future.cause());
-                }
-            }
-        });
         return cf;
     }
 
