@@ -84,7 +84,6 @@ public class TCPSource extends Source {
                 .DEFAULT_WORKER_THREADS))));
     }
 
-    // TODO: 7/6/17 support ConnectionCallback
     @Override
     public void connect(ConnectionCallback connectionCallback) throws ConnectionUnavailableException {
         TCPServer.getInstance().addStreamListener(new StreamListener() {
