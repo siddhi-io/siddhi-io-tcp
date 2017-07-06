@@ -25,11 +25,13 @@ import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
+import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
 import org.wso2.siddhi.core.stream.input.source.Source;
 import org.wso2.siddhi.core.stream.input.source.SourceEventListener;
 import org.wso2.siddhi.core.util.config.ConfigReader;
 import org.wso2.siddhi.core.util.transport.OptionHolder;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -56,8 +58,15 @@ public class TCPSource extends Source {
 
 
     @Override
-    public void init(SourceEventListener sourceEventListener, OptionHolder optionHolder, ConfigReader configReader,
+    public void init(SourceEventListener sourceEventListener, OptionHolder optionHolder,
+                     String[] requestedTransportProperties, ConfigReader configReader,
                      SiddhiAppContext siddhiAppContext) {
+        if (requestedTransportProperties != null && requestedTransportProperties.length > 0) {
+            throw new SiddhiAppCreationException("'tcp' source does not support requestedTransportProperties," +
+                    " but at stream '" + getStreamDefinition().getId() + "' '" +
+                    Arrays.deepToString(requestedTransportProperties) +
+                    "' transport properties are requested");
+        }
         this.sourceEventListener = sourceEventListener;
         context = optionHolder.validateAndGetStaticValue(CONTEXT,
                 siddhiAppContext.getName() + "/" + sourceEventListener.getStreamDefinition().getId());
@@ -75,8 +84,9 @@ public class TCPSource extends Source {
                 .DEFAULT_WORKER_THREADS))));
     }
 
+    // TODO: 7/6/17 support ConnectionCallback
     @Override
-    public void connect() throws ConnectionUnavailableException {
+    public void connect(ConnectionCallback connectionCallback) throws ConnectionUnavailableException {
         TCPServer.getInstance().addStreamListener(new StreamListener() {
             @Override
             public String getChannelId() {
@@ -85,10 +95,15 @@ public class TCPSource extends Source {
 
             @Override
             public void onMessage(byte[] message) {
-                sourceEventListener.onEvent(message);
+                sourceEventListener.onEvent(message, null);
             }
         });
         TCPServer.getInstance().start(serverConfig);
+    }
+
+    @Override
+    public Class[] getOutputEventClasses() {
+        return new Class[]{byte[].class};
     }
 
     @Override

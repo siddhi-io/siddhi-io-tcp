@@ -66,11 +66,6 @@ public class TCPSink extends Sink {
     private Boolean sync = null;
 
     @Override
-    public String[] getSupportedDynamicOptions() {
-        return new String[]{SYNC};
-    }
-
-    @Override
     protected void init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
                         ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
         String url = optionHolder.validateAndGetStaticValue(URL);
@@ -100,6 +95,17 @@ public class TCPSink extends Sink {
         tcpNettyClient = new TCPNettyClient(workerThreads, keepAlive, tcpNoDelay);
 
     }
+
+    @Override
+    public Class[] getSupportedInputEventClasses() {
+        return new Class[]{String.class, byte[].class, ByteBuffer.class};
+    }
+
+    @Override
+    public String[] getSupportedDynamicOptions() {
+        return new String[]{SYNC};
+    }
+
 
     @Override
     public void connect() throws ConnectionUnavailableException {
