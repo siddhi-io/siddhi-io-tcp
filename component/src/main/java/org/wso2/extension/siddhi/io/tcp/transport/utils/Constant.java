@@ -28,8 +28,8 @@ public final class Constant {
     public static final int DEFAULT_WORKER_THREADS = 10;
     public static final int DEFAULT_PORT = 9892;
     public static final String DEFAULT_HOST = "0.0.0.0";
-    public static final boolean TCP_NO_DELAY = true;
-    public static final boolean KEEP_ALIVE = true;
+    public static final boolean DEFAULT_TCP_NO_DELAY = true;
+    public static final boolean DEFAULT_KEEP_ALIVE = true;
 
     private Constant() {
 

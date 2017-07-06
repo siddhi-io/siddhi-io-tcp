@@ -28,8 +28,8 @@ import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
  */
 public class TCPServer {
     private static TCPServer ourInstance = new TCPServer();
-
-    private static TCPNettyServer tcpNettyServer = null;
+    private TCPNettyServer tcpNettyServer = new TCPNettyServer();
+    private boolean started = false;
 
     private TCPServer() {
     }
@@ -38,32 +38,32 @@ public class TCPServer {
         return ourInstance;
     }
 
-    public synchronized void start() {
-        if (tcpNettyServer == null) {
-            tcpNettyServer = new TCPNettyServer();
-            tcpNettyServer.start(new ServerConfig());
+    public synchronized void start(ServerConfig serverConfig) {
+        if (!started) {
+            tcpNettyServer.start(serverConfig);
+            started = true;
         }
     }
 
     public synchronized void stop() {
-        if (tcpNettyServer != null) {
+        if (started) {
             if (tcpNettyServer.getNoOfRegisteredStreamListeners() == 0) {
-                tcpNettyServer.shutdownGracefully();
+                try {
+                    tcpNettyServer.shutdownGracefully();
+                } finally {
+                    started = false;
+                }
             }
-            tcpNettyServer = null;
         }
     }
 
 
     public synchronized void addStreamListener(StreamListener streamListener) {
-        start();
         tcpNettyServer.addStreamListener(streamListener);
     }
 
     public synchronized void removeStreamListener(String streamId) {
-        if (tcpNettyServer != null) {
-            tcpNettyServer.removeStreamListener(streamId);
-        }
+        tcpNettyServer.removeStreamListener(streamId);
     }
 
     public void pause() {

@@ -29,8 +29,8 @@ public class ServerConfig {
     private int workerThreads = Constant.DEFAULT_WORKER_THREADS;
     private int port = Constant.DEFAULT_PORT;
     private String host = Constant.DEFAULT_HOST;
-    private boolean tcpNoDelay = Constant.TCP_NO_DELAY;
-    private boolean keepAlive = Constant.KEEP_ALIVE;
+    private boolean tcpNoDelay = Constant.DEFAULT_TCP_NO_DELAY;
+    private boolean keepAlive = Constant.DEFAULT_KEEP_ALIVE;
 
     public int getReceiverThreads() {
         return receiverThreads;

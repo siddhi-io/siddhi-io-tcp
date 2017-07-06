@@ -49,26 +49,30 @@ import java.util.Map;
 )
 public class TCPSink extends Sink {
 
-    public static final String URL = "url";
-    public static final String SYNC = "sync";
+    private static final String TCP_NO_DELAY = "tcp.no.delay";
+    private static final String KEEP_ALIVE = "keep.alive";
+    private static final String WORKER_THREADS = "worker.threads";
+    private static final String DEFAULT_TCP_NO_DELAY = "true";
+    private static final String DEFAULT_KEEP_ALIVE = "true";
+    private static final String DEFAULT_WORKER_THREADS = "0";
+    private static final String URL = "url";
+    private static final String SYNC = "sync";
     private static final Logger log = Logger.getLogger(TCPSink.class);
     private TCPNettyClient tcpNettyClient;
     private String host;
     private int port;
     private String channelId;
     private Option syncOption;
-
-    @Override
-    public String[] getSupportedDynamicOptions() {
-        return new String[]{SYNC};
-    }
+    private Boolean sync = null;
 
     @Override
     protected void init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
                         ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
-        tcpNettyClient = new TCPNettyClient();
         String url = optionHolder.validateAndGetStaticValue(URL);
         syncOption = optionHolder.getOrCreateOption(SYNC, "false");
+        if (syncOption.isStatic()) {
+            sync = Boolean.parseBoolean(syncOption.getValue());
+        }
         try {
             if (!url.startsWith("tcp:")) {
                 throw new SiddhiAppCreationException("Malformed url '" + url + "' with wrong protocol found, " +
@@ -82,8 +86,26 @@ public class TCPSink extends Sink {
             throw new SiddhiAppCreationException("Malformed url '" + url + "' found, expected in format " +
                     "'tcp://<host>:<port>/<context>'", e);
         }
+        boolean tcpNoDelay = Boolean.parseBoolean(optionHolder.validateAndGetStaticValue(TCP_NO_DELAY,
+                DEFAULT_TCP_NO_DELAY));
+        boolean keepAlive = Boolean.parseBoolean(optionHolder.validateAndGetStaticValue(KEEP_ALIVE,
+                DEFAULT_KEEP_ALIVE));
+        int workerThreads = Integer.parseInt(optionHolder.validateAndGetStaticValue(WORKER_THREADS,
+                DEFAULT_WORKER_THREADS));
+        tcpNettyClient = new TCPNettyClient(workerThreads, keepAlive, tcpNoDelay);
 
     }
+
+    @Override
+    public Class[] getSupportedInputEventClasses() {
+        return new Class[]{String.class, byte[].class, ByteBuffer.class};
+    }
+
+    @Override
+    public String[] getSupportedDynamicOptions() {
+        return new String[]{SYNC};
+    }
+
 
     @Override
     public void connect() throws ConnectionUnavailableException {
@@ -92,12 +114,28 @@ public class TCPSink extends Sink {
 
     @Override
     public void publish(Object payload, DynamicOptions dynamicOptions) throws ConnectionUnavailableException {
+        byte[] message;
         if (payload instanceof String) {
-            tcpNettyClient.send(channelId, ((String) payload).getBytes(Charset.defaultCharset()));
+            message = ((String) payload).getBytes(Charset.defaultCharset());
         } else if (payload instanceof ByteBuffer) {
-            tcpNettyClient.send(channelId, ((ByteBuffer) payload).array());
+            message = ((ByteBuffer) payload).array();
         } else {
-            tcpNettyClient.send(channelId, (byte[]) payload);
+            message = (byte[]) payload;
+        }
+        boolean isSync;
+        if (sync != null) {
+            isSync = sync;
+        } else {
+            isSync = Boolean.parseBoolean(syncOption.getValue(dynamicOptions));
+        }
+        if (isSync) {
+            try {
+                tcpNettyClient.send(channelId, message).sync();
+            } catch (InterruptedException e) {
+                throw new ConnectionUnavailableException(e.getMessage(), e);
+            }
+        } else {
+            tcpNettyClient.send(channelId, message);
         }
     }
 

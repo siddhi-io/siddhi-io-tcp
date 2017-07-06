@@ -45,11 +45,11 @@
     </profiles>
 
     <properties>
-        <siddhi.version>4.0.0-M7</siddhi.version>
+        <siddhi.version>4.0.0-M13</siddhi.version>
         <log4j.version>1.2.17.wso2v1</log4j.version>
         <testng.version>6.8</testng.version>
         <netty.verion>4.1.6.Final</netty.verion>
-        <siddhi.map.bianry.version>1.0.0-SNAPSHOT</siddhi.map.bianry.version>
+        <siddhi.map.binary.version>1.0.0</siddhi.map.binary.version>
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
         <mavan.checkstyle.suppression.file>checkstyle-suppressions.xml</mavan.checkstyle.suppression.file>
     </properties>
@@ -82,7 +82,7 @@
             <dependency>
                 <groupId>org.wso2.extension.siddhi.map.binary</groupId>
                 <artifactId>siddhi-map-binary</artifactId>
-                <version>${siddhi.map.bianry.version}</version>
+                <version>${siddhi.map.binary.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.log4j.wso2</groupId>
