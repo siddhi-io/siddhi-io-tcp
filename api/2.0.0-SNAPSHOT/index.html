@@ -186,8 +186,6 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
-      
-    
     
       <label class="md-nav__link md-nav__link--active" for="toc">
         2.0.0-SNAPSHOT
@@ -201,13 +199,19 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
-  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#sink" title="Sink" class="md-nav__link">
+    Sink
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#tcp-sink" title="tcp (Sink)" class="md-nav__link">
     tcp (Sink)
   </a>
@@ -234,6 +238,64 @@
   <a href="#example-1" title="Example 1" class="md-nav__link">
     Example 1
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source" title="Source" class="md-nav__link">
+    Source
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tcp-source" title="tcp (Source)" class="md-nav__link">
+    tcp (Source)
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_1" title="Syntax" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" title="Examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1_1" title="Example 1" class="md-nav__link">
+    Example 1
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -266,34 +328,10 @@
       
 
 
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
-    
-    <label class="md-nav__link" for="nav-3">
-      About
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        About
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
   <li class="md-nav__item">
-    <a href="../../about/license/" title="License" class="md-nav__link">
+    <a href="../../license/" title="License" class="md-nav__link">
       License
     </a>
-  </li>
-
-        
-      </ul>
-    </nav>
   </li>
 
     
@@ -311,13 +349,19 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
-  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#sink" title="Sink" class="md-nav__link">
+    Sink
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#tcp-sink" title="tcp (Sink)" class="md-nav__link">
     tcp (Sink)
   </a>
@@ -344,6 +388,64 @@
   <a href="#example-1" title="Example 1" class="md-nav__link">
     Example 1
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source" title="Source" class="md-nav__link">
+    Source
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tcp-source" title="tcp (Source)" class="md-nav__link">
+    tcp (Source)
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_1" title="Syntax" class="md-nav__link">
+    Syntax
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" title="Examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1_1" title="Example 1" class="md-nav__link">
+    Example 1
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -372,31 +474,33 @@
               
                 
                 
-                <h1 id="sink">Sink</h1>
-<h2 id="tcp-sink">tcp <em>(Sink)</em></h2>
-<p style="word-wrap: break-word">TBD</p>
+                  <h1>2.0.0-SNAPSHOT</h1>
+                
+                <h2 id="sink">Sink</h2>
+<h3 id="tcp-sink">tcp <em>(Sink)</em></h3>
+<p style="word-wrap: break-word">Receives events via TCP transport</p>
 
-<h3 id="syntax">Syntax</h3>
+<h4 id="syntax">Syntax</h4>
 <pre><code>@sink(type=&quot;tcp&quot;, @map(...)))
 </code></pre>
 
-<h3 id="examples">Examples</h3>
-<h4 id="example-1">Example 1</h4>
+<h4 id="examples">Examples</h4>
+<h5 id="example-1">Example 1</h5>
 <pre><code>TBD
 </code></pre>
 
 <p style="word-wrap: break-word">TBD</p>
 
-<h1 id="source">Source</h1>
-<h2 id="tcp-source">tcp <em>(Source)</em></h2>
+<h2 id="source">Source</h2>
+<h3 id="tcp-source">tcp <em>(Source)</em></h3>
 <p style="word-wrap: break-word">TBD</p>
 
-<h3 id="syntax_1">Syntax</h3>
+<h4 id="syntax_1">Syntax</h4>
 <pre><code>@source(type=&quot;tcp&quot;, @map(...)))
 </code></pre>
 
-<h3 id="examples_1">Examples</h3>
-<h4 id="example-1_1">Example 1</h4>
+<h4 id="examples_1">Examples</h4>
+<h5 id="example-1_1">Example 1</h5>
 <pre><code>TBD
 </code></pre>
 
@@ -434,7 +538,7 @@
           </a>
         
         
-          <a href="../../about/license/" title="License" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../../license/" title="License" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
