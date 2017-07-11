@@ -46,7 +46,8 @@ import java.util.Map;
 @Extension(
         name = "tcp",
         namespace = "sink",
-        description = "TBD",
+        description = "Receives events via TCP transport",
+      //  parameters = @Parameter(name = ),
         examples = @Example(description = "TBD", syntax = "TBD")
 )
 public class TCPSink extends Sink {
