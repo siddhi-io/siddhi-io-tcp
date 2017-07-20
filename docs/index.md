@@ -4,4 +4,5 @@ Siddhi TCP input output extension can be used to consume and publish events via 
 
 ## API Docs:
 
+1. <a href="./api/2.0.2-SNAPSHOT">2.0.2-SNAPSHOT</a>
 1. <a href="./api/2.0.0-SNAPSHOT">2.0.0-SNAPSHOT</a>
