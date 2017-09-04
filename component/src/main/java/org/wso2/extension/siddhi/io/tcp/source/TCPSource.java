@@ -23,6 +23,9 @@ import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.Constant;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
+import org.wso2.siddhi.annotation.Parameter;
+import org.wso2.siddhi.annotation.SystemParameter;
+import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
@@ -40,8 +43,63 @@ import java.util.Map;
 @Extension(
         name = "tcp",
         namespace = "source",
-        description = "TBD",
-        examples = @Example(description = "TBD", syntax = "TBD")
+        description = "A Siddhi application can be configured to receive events via the TCP transport by adding " +
+                "the @Source(type = ‘tcp’) annotation at the top of an event stream definition.\n" +
+                "\n" +
+                "When this is defined the defined event stream will receive events from the TCP transport in " +
+                "the default server host and port using the default or defined context.",
+        systemParameter = {
+                @SystemParameter(
+                        name = "context",
+                        description = "'context' can be optionally configured.",
+                        defaultValue = "<execution plan name>/<stream name>"
+                ),
+                @SystemParameter(
+                        name = "receiver.threads",
+                        description = "Number of threads to receive connections.",
+                        defaultValue = "10"
+                ),
+                @SystemParameter(
+                        name = "worker.threads",
+                        description = "Number of threads to serve events.\n" +
+                                "System will pick the optimal value based on the number of processors available.",
+                        defaultValue = "10"
+                ),
+                @SystemParameter(
+                        name = "port",
+                        description = "Tcp server port.",
+                        defaultValue = "9892"
+                ),
+                @SystemParameter(
+                        name = "host",
+                        description = "Tcp server host.",
+                        defaultValue = "0.0.0.0"
+                ),
+                @SystemParameter(
+                        name = "tcp.no.delay",
+                        //TODO: refine the description
+                        description = "This property is for the server.",
+                        defaultValue = "true"
+                ),
+                @SystemParameter(
+                        name = "keep.alive",
+                        // TODO : verify the description
+                        description = "This property defines whether the server should be kept alive or not when " +
+                                "there are no connections available.",
+                        defaultValue = "true"
+                )
+        },
+        examples = {
+                @Example(
+                        syntax = "" +
+                                "@Source(type = ‘tcp’, context=’abc’)\n" +
+                                "define stream Foo (attribute1 string, attribute2 int );",
+                        description = "" +
+                                "Under this configuration, events are received via the TCP transport on default host," +
+                                "port and in the abc context and processes them in the Foo stream. "
+
+                )
+        }
 )
 public class TCPSource extends Source {
 

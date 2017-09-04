@@ -24,6 +24,9 @@ import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
+import org.wso2.siddhi.annotation.Parameter;
+import org.wso2.siddhi.annotation.SystemParameter;
+import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
@@ -46,9 +49,57 @@ import java.util.Map;
 @Extension(
         name = "tcp",
         namespace = "sink",
-        description = "Receives events via TCP transport",
-      //  parameters = @Parameter(name = ),
-        examples = @Example(description = "TBD", syntax = "TBD")
+        description = "" +
+                "A Siddhi application can be configured to publish events via the TCP transport by " +
+                "adding the @Sink(type = ‘tcp’) annotation at the top of an event stream definition.",
+        parameters = {
+                @Parameter(
+                        name = "url",
+                        description = "The URL to which outgoing events should be published via TCP.",
+                        type = DataType.STRING
+                ),
+                @Parameter(
+                        name = "sync",
+                        description = "This parameter defines whether the events should be published in a " +
+                                "synchronized manner or not.",
+                        type = DataType.STRING,
+                        dynamic = true,
+                        optional = true,
+                        defaultValue = "false"
+                ),
+                @Parameter(
+                        name = "tcp.no.delay",
+                        //TODO : add a description
+                        description = "",
+                        type = DataType.BOOL,
+                        optional = true,
+                        defaultValue = "true"
+                ),
+                @Parameter(
+                        name = "keep.alive",
+                        // TODO : verify the description
+                        description = "This property defines whether the server should be kept alive or not when " +
+                                "there are no connections available.",
+                        defaultValue = "true"
+                ),
+                @Parameter(
+                        name = "worker.threads",
+                        description = "Number of threads to serve events.",
+                        defaultValue = "10"
+                ),
+
+        },
+        examples = {
+                @Example(
+                        syntax = "@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' \n" +
+                                "@map(type='binary'))\n" +
+                                "define stream Foo (attribute1 string, attribute2 int );",
+                        description = "" +
+                                "A sink of type 'tcp' has been defined.\n" +
+                                "All events arriving at Foo stream via TCP transport will be sent " +
+                                "to the url tcp://localhost:8080/abc in a synchronous manner."
+                )
+        }
 )
 public class TCPSink extends Sink {
 
