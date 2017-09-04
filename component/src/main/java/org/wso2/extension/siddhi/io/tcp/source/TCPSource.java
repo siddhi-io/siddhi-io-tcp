@@ -23,9 +23,7 @@ import org.wso2.extension.siddhi.io.tcp.transport.config.ServerConfig;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.Constant;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
-import org.wso2.siddhi.annotation.Parameter;
 import org.wso2.siddhi.annotation.SystemParameter;
-import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
@@ -52,41 +50,48 @@ import java.util.Map;
                 @SystemParameter(
                         name = "context",
                         description = "'context' can be optionally configured.",
-                        defaultValue = "<execution plan name>/<stream name>"
+                        defaultValue = "<execution plan name>/<stream name>",
+                        possibleParameters = "Any string"
                 ),
                 @SystemParameter(
                         name = "receiver.threads",
                         description = "Number of threads to receive connections.",
-                        defaultValue = "10"
+                        defaultValue = "10",
+                        possibleParameters = "Any integer"
                 ),
                 @SystemParameter(
                         name = "worker.threads",
                         description = "Number of threads to serve events.\n" +
                                 "System will pick the optimal value based on the number of processors available.",
-                        defaultValue = "10"
+                        defaultValue = "10",
+                        possibleParameters = "Any integer"
                 ),
                 @SystemParameter(
                         name = "port",
                         description = "Tcp server port.",
-                        defaultValue = "9892"
+                        defaultValue = "9892",
+                        possibleParameters = "Any integer"
                 ),
                 @SystemParameter(
                         name = "host",
                         description = "Tcp server host.",
-                        defaultValue = "0.0.0.0"
+                        defaultValue = "0.0.0.0",
+                        possibleParameters = "Any valid URL"
                 ),
                 @SystemParameter(
                         name = "tcp.no.delay",
                         //TODO: refine the description
                         description = "This property is for the server.",
-                        defaultValue = "true"
+                        defaultValue = "true",
+                        possibleParameters = {"true", "false"}
                 ),
                 @SystemParameter(
                         name = "keep.alive",
                         // TODO : verify the description
                         description = "This property defines whether the server should be kept alive or not when " +
                                 "there are no connections available.",
-                        defaultValue = "true"
+                        defaultValue = "true",
+                        possibleParameters = {"true", "false"}
                 )
         },
         examples = {

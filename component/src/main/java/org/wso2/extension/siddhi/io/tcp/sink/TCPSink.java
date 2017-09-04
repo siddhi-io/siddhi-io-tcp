@@ -25,7 +25,6 @@ import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
 import org.wso2.siddhi.annotation.Parameter;
-import org.wso2.siddhi.annotation.SystemParameter;
 import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
@@ -70,7 +69,7 @@ import java.util.Map;
                 @Parameter(
                         name = "tcp.no.delay",
                         //TODO : add a description
-                        description = "",
+                        description = "-",
                         type = DataType.BOOL,
                         optional = true,
                         defaultValue = "true"
@@ -80,11 +79,15 @@ import java.util.Map;
                         // TODO : verify the description
                         description = "This property defines whether the server should be kept alive or not when " +
                                 "there are no connections available.",
+                        type = DataType.BOOL,
+                        optional = true,
                         defaultValue = "true"
                 ),
                 @Parameter(
                         name = "worker.threads",
                         description = "Number of threads to serve events.",
+                        type = {DataType.INT, DataType.LONG},
+                        optional = true,
                         defaultValue = "10"
                 ),
 
