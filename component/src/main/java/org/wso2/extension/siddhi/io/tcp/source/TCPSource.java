@@ -49,7 +49,8 @@ import java.util.Map;
         systemParameter = {
                 @SystemParameter(
                         name = "context",
-                        description = "'context' can be optionally configured.",
+                        //TODO: refine the description
+                        description = "Parameter 'context' can be optionally configured.",
                         defaultValue = "<execution plan name>/<stream name>",
                         possibleParameters = "Any string"
                 ),
@@ -80,8 +81,13 @@ import java.util.Map;
                 ),
                 @SystemParameter(
                         name = "tcp.no.delay",
-                        //TODO: refine the description
-                        description = "This property is for the server.",
+                        //TODO: verity the description
+                        description = "This is to specify whether the Nagle algorithm should be disabled or not in " +
+                                "the server execution.\n" +
+                                "If tcp.no.delay = 'true', the execution of Nagle algorithm  will be disabled in the " +
+                                "underlying tcp logic. Hence there will be no delay between two successive writes to " +
+                                "the TCP connection.\n" +
+                                "Else there can be a constant ack delay. ",
                         defaultValue = "true",
                         possibleParameters = {"true", "false"}
                 ),

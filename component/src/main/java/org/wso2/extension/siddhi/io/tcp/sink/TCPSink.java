@@ -60,7 +60,9 @@ import java.util.Map;
                 @Parameter(
                         name = "sync",
                         description = "This parameter defines whether the events should be published in a " +
-                                "synchronized manner or not.",
+                                "synchronized manner or not.\n" +
+                                "If sync = 'true', then the worker will wait for the ack after sending the message.\n" +
+                                "Else it will not wait for an ack.",
                         type = DataType.STRING,
                         dynamic = true,
                         optional = true,
@@ -68,8 +70,12 @@ import java.util.Map;
                 ),
                 @Parameter(
                         name = "tcp.no.delay",
-                        //TODO : add a description
-                        description = "-",
+                        description = "This is to specify whether the Nagle algorithm should be disabled or not in " +
+                                "the server execution.\n" +
+                                "If tcp.no.delay = 'true', the execution of Nagle algorithm  will be disabled in the " +
+                                "underlying tcp logic. Hence there will be no delay between two successive writes to " +
+                                "the TCP connection.\n" +
+                                "Else there can be a constant ack delay. ",
                         type = DataType.BOOL,
                         optional = true,
                         defaultValue = "true"
