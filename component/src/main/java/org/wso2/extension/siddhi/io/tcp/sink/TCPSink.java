@@ -86,7 +86,12 @@ public class TCPSink extends Sink {
             host = aURL.getHost();
             port = aURL.getPort();
             hostAndPort = host + ":" + port;
-            channelId = aURL.getPath().substring(1);
+            String path = aURL.getPath();
+            if (path.length() < 2) {
+                throw new SiddhiAppCreationException("Malformed url '" + url + "' found with no context," +
+                        " expected in format 'tcp://<host>:<port>/<context>'");
+            }
+            channelId = path.substring(1);
         } catch (MalformedURLException e) {
             throw new SiddhiAppCreationException("Malformed url '" + url + "' found, expected in format " +
                     "'tcp://<host>:<port>/<context>'", e);
