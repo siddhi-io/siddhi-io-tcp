@@ -71,7 +71,8 @@ import java.util.Map;
                 ),
                 @Parameter(
                         name = "tcp.no.delay",
-                        description = "This is to specify whether to disable Nagle algorithm during message passing.\n" +
+                        description = "This is to specify whether to disable Nagle algorithm during message passing." +
+                                "\n" +
                                 "If tcp.no.delay = 'true', the execution of Nagle algorithm will be disabled in the " +
                                 "underlying TCP logic. Hence there will be no delay between two successive writes to " +
                                 "the TCP connection.\n" +
