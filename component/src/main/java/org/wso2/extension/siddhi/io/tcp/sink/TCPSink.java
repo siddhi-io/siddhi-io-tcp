@@ -54,7 +54,8 @@ import java.util.Map;
         parameters = {
                 @Parameter(
                         name = "url",
-                        description = "The URL to which outgoing events should be published via TCP.",
+                        description = "The URL to which outgoing events should be published via TCP.\n" +
+                                "The URL should adhere to `tcp://<host>:<port>/<context>` format.",
                         type = DataType.STRING
                 ),
                 @Parameter(
@@ -70,20 +71,18 @@ import java.util.Map;
                 ),
                 @Parameter(
                         name = "tcp.no.delay",
-                        description = "This is to specify whether the Nagle algorithm should be disabled or not in " +
-                                "the server execution.\n" +
-                                "If tcp.no.delay = 'true', the execution of Nagle algorithm  will be disabled in the " +
-                                "underlying tcp logic. Hence there will be no delay between two successive writes to " +
+                        description = "This is to specify whether to disable Nagle algorithm during message passing.\n" +
+                                "If tcp.no.delay = 'true', the execution of Nagle algorithm will be disabled in the " +
+                                "underlying TCP logic. Hence there will be no delay between two successive writes to " +
                                 "the TCP connection.\n" +
-                                "Else there can be a constant ack delay. ",
+                                "Else there can be a constant ack delay.",
                         type = DataType.BOOL,
                         optional = true,
                         defaultValue = "true"
                 ),
                 @Parameter(
                         name = "keep.alive",
-                        // TODO : verify the description
-                        description = "This property defines whether the server should be kept alive or not when " +
+                        description = "This property defines whether the server should be kept alive when " +
                                 "there are no connections available.",
                         type = DataType.BOOL,
                         optional = true,
@@ -91,7 +90,7 @@ import java.util.Map;
                 ),
                 @Parameter(
                         name = "worker.threads",
-                        description = "Number of threads to serve events.",
+                        description = "Number of threads to publish events.",
                         type = {DataType.INT, DataType.LONG},
                         optional = true,
                         defaultValue = "10"
@@ -102,7 +101,7 @@ import java.util.Map;
                 @Example(
                         syntax = "@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' \n" +
                                 "@map(type='binary'))\n" +
-                                "define stream Foo (attribute1 string, attribute2 int );",
+                                "define stream Foo (attribute1 string, attribute2 int);",
                         description = "" +
                                 "A sink of type 'tcp' has been defined.\n" +
                                 "All events arriving at Foo stream via TCP transport will be sent " +
