@@ -104,7 +104,7 @@ import java.util.Map;
         examples = {
                 @Example(
                         syntax = "" +
-                                "@Source(type = ‘tcp’, context=’abc’)\n" +
+                                "@Source(type = ‘tcp’, context=’abc’, @map(type='binary'))\n" +
                                 "define stream Foo (attribute1 string, attribute2 int );",
                         description = "" +
                                 "Under this configuration, events are received via the TCP transport on default host," +

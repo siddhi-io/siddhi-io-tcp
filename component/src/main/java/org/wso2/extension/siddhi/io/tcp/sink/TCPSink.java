@@ -101,7 +101,7 @@ import java.util.Map;
         examples = {
                 @Example(
                         syntax = "@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' \n" +
-                                "@map(type='binary'))\n" +
+                                "   @map(type='binary'))\n" +
                                 "define stream Foo (attribute1 string, attribute2 int);",
                         description = "" +
                                 "A sink of type 'tcp' has been defined.\n" +
