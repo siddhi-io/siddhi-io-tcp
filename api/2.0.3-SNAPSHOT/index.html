@@ -179,30 +179,6 @@
           
           
 
-
-  <li class="md-nav__item">
-    <a href="../2.0.0-SNAPSHOT/" title="2.0.0-SNAPSHOT" class="md-nav__link">
-      2.0.0-SNAPSHOT
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../2.0.2-SNAPSHOT/" title="2.0.2-SNAPSHOT" class="md-nav__link">
-      2.0.2-SNAPSHOT
-    </a>
-  </li>
-
-        
-          
-          
-          
-
   
 
 
@@ -435,7 +411,7 @@
 <p><span id="examples" class="md-typeset" style="display: block; font-weight: bold;">Examples</span>
 <span id="example-1" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 1</span></p>
 <pre><code>@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' 
-@map(type='binary'))
+   @map(type='binary'))
 define stream Foo (attribute1 string, attribute2 int);
 </code></pre>
 
@@ -515,7 +491,7 @@ define stream Foo (attribute1 string, attribute2 int);
 </table></p>
 <p><span id="examples" class="md-typeset" style="display: block; font-weight: bold;">Examples</span>
 <span id="example-1" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 1</span></p>
-<pre><code>@Source(type = ‘tcp’, context=’abc’)
+<pre><code>@Source(type = ‘tcp’, context=’abc’, @map(type='binary'))
 define stream Foo (attribute1 string, attribute2 int );
 </code></pre>
 
@@ -538,7 +514,7 @@ define stream Foo (attribute1 string, attribute2 int );
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../2.0.2-SNAPSHOT/" title="2.0.2-SNAPSHOT" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../.." title="Welcome to WSO2 Siddhi IO TCP" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -547,7 +523,7 @@ define stream Foo (attribute1 string, attribute2 int );
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                2.0.2-SNAPSHOT
+                Welcome to WSO2 Siddhi IO TCP
               </span>
             </div>
           </a>
