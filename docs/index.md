@@ -46,8 +46,8 @@ Latest API Docs is <a target="_blank" href="https://wso2-extensions.github.io/si
 
 ## Features
 
-* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-tcp/api/2.0.3-SNAPSHOT/#tcp-sink">tcp</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sinks">Sink</a>)*<br><div style="padding-left: 1em;"><p>A Siddhi application can be configured to publish events via the TCP transport by adding the @Sink(type = ‘tcp’) annotation at the top of an event stream definition.</p></div>
 * <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-tcp/api/2.0.3-SNAPSHOT/#tcp-source">tcp</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sources">Source</a>)*<br><div style="padding-left: 1em;"><p>A Siddhi application can be configured to receive events via the TCP transport by adding the @Source(type = ‘tcp’) annotation at the top of an event stream definition.<br><br>When this is defined the associated stream will receive events from the TCP transport on the host and port defined in the system.</p></div>
+* <a target="_blank" href="https://wso2-extensions.github.io/siddhi-io-tcp/api/2.0.3-SNAPSHOT/#tcp-sink">tcp</a> *(<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sinks">Sink</a>)*<br><div style="padding-left: 1em;"><p>A Siddhi application can be configured to publish events via the TCP transport by adding the @Sink(type = ‘tcp’) annotation at the top of an event stream definition.</p></div>
 
 ## How to Contribute
  
