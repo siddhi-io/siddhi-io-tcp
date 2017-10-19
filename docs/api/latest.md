@@ -1,82 +1,10 @@
-# API Docs - v2.0.7-SNAPSHOT
-
-## Sink
-
-### tcp *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sink">(Sink)</a>*
-
-<p style="word-wrap: break-word">A Siddhi application can be configured to publish events via the TCP transport by adding the @Sink(type = ‘tcp’) annotation at the top of an event stream definition.</p>
-
-<span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span>
-```
-@sink(type="tcp", url="<STRING>", sync="<STRING>", tcp.no.delay="<BOOL>", keep.alive="<BOOL>", worker.threads="<INT|LONG>", @map(...)))
-```
-
-<span id="query-parameters" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">QUERY PARAMETERS</span>
-<table>
-    <tr>
-        <th>Name</th>
-        <th style="min-width: 20em">Description</th>
-        <th>Default Value</th>
-        <th>Possible Data Types</th>
-        <th>Optional</th>
-        <th>Dynamic</th>
-    </tr>
-    <tr>
-        <td style="vertical-align: top">url</td>
-        <td style="vertical-align: top; word-wrap: break-word">The URL to which outgoing events should be published via TCP.<br>The URL should adhere to <code>tcp://&lt;host&gt;:&lt;port&gt;/&lt;context&gt;</code> format.</td>
-        <td style="vertical-align: top"></td>
-        <td style="vertical-align: top">STRING</td>
-        <td style="vertical-align: top">No</td>
-        <td style="vertical-align: top">No</td>
-    </tr>
-    <tr>
-        <td style="vertical-align: top">sync</td>
-        <td style="vertical-align: top; word-wrap: break-word">This parameter defines whether the events should be published in a synchronized manner or not.<br>If sync = 'true', then the worker will wait for the ack after sending the message.<br>Else it will not wait for an ack.</td>
-        <td style="vertical-align: top">false</td>
-        <td style="vertical-align: top">STRING</td>
-        <td style="vertical-align: top">Yes</td>
-        <td style="vertical-align: top">Yes</td>
-    </tr>
-    <tr>
-        <td style="vertical-align: top">tcp.no.delay</td>
-        <td style="vertical-align: top; word-wrap: break-word">This is to specify whether to disable Nagle algorithm during message passing.<br>If tcp.no.delay = 'true', the execution of Nagle algorithm will be disabled in the underlying TCP logic. Hence there will be no delay between two successive writes to the TCP connection.<br>Else there can be a constant ack delay.</td>
-        <td style="vertical-align: top">true</td>
-        <td style="vertical-align: top">BOOL</td>
-        <td style="vertical-align: top">Yes</td>
-        <td style="vertical-align: top">No</td>
-    </tr>
-    <tr>
-        <td style="vertical-align: top">keep.alive</td>
-        <td style="vertical-align: top; word-wrap: break-word">This property defines whether the server should be kept alive when there are no connections available.</td>
-        <td style="vertical-align: top">true</td>
-        <td style="vertical-align: top">BOOL</td>
-        <td style="vertical-align: top">Yes</td>
-        <td style="vertical-align: top">No</td>
-    </tr>
-    <tr>
-        <td style="vertical-align: top">worker.threads</td>
-        <td style="vertical-align: top; word-wrap: break-word">Number of threads to publish events.</td>
-        <td style="vertical-align: top">10</td>
-        <td style="vertical-align: top">INT<br>LONG</td>
-        <td style="vertical-align: top">Yes</td>
-        <td style="vertical-align: top">No</td>
-    </tr>
-</table>
-
-<span id="examples" class="md-typeset" style="display: block; font-weight: bold;">Examples</span>
-<span id="example-1" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 1</span>
-```
-@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' 
-   @map(type='binary'))
-define stream Foo (attribute1 string, attribute2 int);
-```
-<p style="word-wrap: break-word">A sink of type 'tcp' has been defined.<br>All events arriving at Foo stream via TCP transport will be sent to the url tcp://localhost:8080/abc in a synchronous manner.</p>
+# API Docs - v2.0.7
 
 ## Source
 
 ### tcp *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#source">(Source)</a>*
 
-<p style="word-wrap: break-word">A Siddhi application can be configured to receive events via the TCP transport by adding the @Source(type = ‘tcp’) annotation at the top of an event stream definition.<br><br>When this is defined the associated stream will receive events from the TCP transport on the host and port defined in the system.</p>
+<p style="word-wrap: break-word">A Siddhi application can be configured to receive events via the TCP transport by adding the @Source(type = ?tcp?) annotation at the top of an event stream definition.<br><br>When this is defined the associated stream will receive events from the TCP transport on the host and port defined in the system.</p>
 
 <span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span>
 ```
@@ -152,8 +80,80 @@ define stream Foo (attribute1 string, attribute2 int);
 <span id="examples" class="md-typeset" style="display: block; font-weight: bold;">Examples</span>
 <span id="example-1" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 1</span>
 ```
-@Source(type = ‘tcp’, context=’abc’, @map(type='binary'))
+@Source(type = ?tcp?, context=?abc?, @map(type='binary'))
 define stream Foo (attribute1 string, attribute2 int );
 ```
 <p style="word-wrap: break-word">Under this configuration, events are received via the TCP transport on default host,port, <code>abc</code> context, and they are passed to <code>Foo</code> stream for processing. </p>
+
+## Sink
+
+### tcp *<a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sink">(Sink)</a>*
+
+<p style="word-wrap: break-word">A Siddhi application can be configured to publish events via the TCP transport by adding the @Sink(type = ?tcp?) annotation at the top of an event stream definition.</p>
+
+<span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span>
+```
+@sink(type="tcp", url="<STRING>", sync="<STRING>", tcp.no.delay="<BOOL>", keep.alive="<BOOL>", worker.threads="<INT|LONG>", @map(...)))
+```
+
+<span id="query-parameters" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">QUERY PARAMETERS</span>
+<table>
+    <tr>
+        <th>Name</th>
+        <th style="min-width: 20em">Description</th>
+        <th>Default Value</th>
+        <th>Possible Data Types</th>
+        <th>Optional</th>
+        <th>Dynamic</th>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">url</td>
+        <td style="vertical-align: top; word-wrap: break-word">The URL to which outgoing events should be published via TCP.<br>The URL should adhere to <code>tcp://&lt;host&gt;:&lt;port&gt;/&lt;context&gt;</code> format.</td>
+        <td style="vertical-align: top"></td>
+        <td style="vertical-align: top">STRING</td>
+        <td style="vertical-align: top">No</td>
+        <td style="vertical-align: top">No</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">sync</td>
+        <td style="vertical-align: top; word-wrap: break-word">This parameter defines whether the events should be published in a synchronized manner or not.<br>If sync = 'true', then the worker will wait for the ack after sending the message.<br>Else it will not wait for an ack.</td>
+        <td style="vertical-align: top">false</td>
+        <td style="vertical-align: top">STRING</td>
+        <td style="vertical-align: top">Yes</td>
+        <td style="vertical-align: top">Yes</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">tcp.no.delay</td>
+        <td style="vertical-align: top; word-wrap: break-word">This is to specify whether to disable Nagle algorithm during message passing.<br>If tcp.no.delay = 'true', the execution of Nagle algorithm will be disabled in the underlying TCP logic. Hence there will be no delay between two successive writes to the TCP connection.<br>Else there can be a constant ack delay.</td>
+        <td style="vertical-align: top">true</td>
+        <td style="vertical-align: top">BOOL</td>
+        <td style="vertical-align: top">Yes</td>
+        <td style="vertical-align: top">No</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">keep.alive</td>
+        <td style="vertical-align: top; word-wrap: break-word">This property defines whether the server should be kept alive when there are no connections available.</td>
+        <td style="vertical-align: top">true</td>
+        <td style="vertical-align: top">BOOL</td>
+        <td style="vertical-align: top">Yes</td>
+        <td style="vertical-align: top">No</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">worker.threads</td>
+        <td style="vertical-align: top; word-wrap: break-word">Number of threads to publish events.</td>
+        <td style="vertical-align: top">10</td>
+        <td style="vertical-align: top">INT<br>LONG</td>
+        <td style="vertical-align: top">Yes</td>
+        <td style="vertical-align: top">No</td>
+    </tr>
+</table>
+
+<span id="examples" class="md-typeset" style="display: block; font-weight: bold;">Examples</span>
+<span id="example-1" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 1</span>
+```
+@Sink(type = ?tcp?, url='tcp://localhost:8080/abc?, sync='true' 
+   @map(type='binary'))
+define stream Foo (attribute1 string, attribute2 int);
+```
+<p style="word-wrap: break-word">A sink of type 'tcp' has been defined.<br>All events arriving at Foo stream via TCP transport will be sent to the url tcp://localhost:8080/abc in a synchronous manner.</p>
 
