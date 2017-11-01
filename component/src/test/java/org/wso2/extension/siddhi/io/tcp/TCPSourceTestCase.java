@@ -460,7 +460,7 @@ public class TCPSourceTestCase {
 
     }
 
-    @Test
+    @Test(expectedExceptions = SiddhiAppCreationException.class)
     public void testTcpSource8() throws InterruptedException {
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {

@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
 import org.wso2.siddhi.annotation.Example;
 import org.wso2.siddhi.annotation.Extension;
+import org.wso2.siddhi.annotation.Parameter;
+import org.wso2.siddhi.annotation.util.DataType;
 import org.wso2.siddhi.core.config.SiddhiAppContext;
 import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
@@ -46,9 +48,67 @@ import java.util.Map;
 @Extension(
         name = "tcp",
         namespace = "sink",
-        description = "Receives events via TCP transport",
-      //  parameters = @Parameter(name = ),
-        examples = @Example(description = "TBD", syntax = "TBD")
+        description = "" +
+                "A Siddhi application can be configured to publish events via the TCP transport by " +
+                "adding the @Sink(type = ‘tcp’) annotation at the top of an event stream definition.",
+        parameters = {
+                @Parameter(
+                        name = "url",
+                        description = "The URL to which outgoing events should be published via TCP.\n" +
+                                "The URL should adhere to `tcp://<host>:<port>/<context>` format.",
+                        type = DataType.STRING
+                ),
+                @Parameter(
+                        name = "sync",
+                        description = "This parameter defines whether the events should be published in a " +
+                                "synchronized manner or not.\n" +
+                                "If sync = 'true', then the worker will wait for the ack after sending the message.\n" +
+                                "Else it will not wait for an ack.",
+                        type = DataType.STRING,
+                        dynamic = true,
+                        optional = true,
+                        defaultValue = "false"
+                ),
+                @Parameter(
+                        name = "tcp.no.delay",
+                        description = "This is to specify whether to disable Nagle algorithm during message passing." +
+                                "\n" +
+                                "If tcp.no.delay = 'true', the execution of Nagle algorithm will be disabled in the " +
+                                "underlying TCP logic. Hence there will be no delay between two successive writes to " +
+                                "the TCP connection.\n" +
+                                "Else there can be a constant ack delay.",
+                        type = DataType.BOOL,
+                        optional = true,
+                        defaultValue = "true"
+                ),
+                @Parameter(
+                        name = "keep.alive",
+                        description = "This property defines whether the server should be kept alive when " +
+                                "there are no connections available.",
+                        type = DataType.BOOL,
+                        optional = true,
+                        defaultValue = "true"
+                ),
+                @Parameter(
+                        name = "worker.threads",
+                        description = "Number of threads to publish events.",
+                        type = {DataType.INT, DataType.LONG},
+                        optional = true,
+                        defaultValue = "10"
+                ),
+
+        },
+        examples = {
+                @Example(
+                        syntax = "@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' \n" +
+                                "   @map(type='binary'))\n" +
+                                "define stream Foo (attribute1 string, attribute2 int);",
+                        description = "" +
+                                "A sink of type 'tcp' has been defined.\n" +
+                                "All events arriving at Foo stream via TCP transport will be sent " +
+                                "to the url tcp://localhost:8080/abc in a synchronous manner."
+                )
+        }
 )
 public class TCPSink extends Sink {
 
@@ -86,7 +146,12 @@ public class TCPSink extends Sink {
             host = aURL.getHost();
             port = aURL.getPort();
             hostAndPort = host + ":" + port;
-            channelId = aURL.getPath().substring(1);
+            String path = aURL.getPath();
+            if (path.length() < 2) {
+                throw new SiddhiAppCreationException("Malformed url '" + url + "' found with no context," +
+                        " expected in format 'tcp://<host>:<port>/<context>'");
+            }
+            channelId = path.substring(1);
         } catch (MalformedURLException e) {
             throw new SiddhiAppCreationException("Malformed url '" + url + "' found, expected in format " +
                     "'tcp://<host>:<port>/<context>'", e);
