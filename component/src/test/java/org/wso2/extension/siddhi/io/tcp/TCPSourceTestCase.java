@@ -470,7 +470,6 @@ public class TCPSourceTestCase {
             String inStreamDefinition = "" +
                     "@app:name('foo')" +
                     "@source(type='tcp', @map(type='binary'))" +
-                    "@source(type='tcp', @map(type='binary'))" +
                     "define stream inputStream (a string, b int, c float, d long, e double, f bool);";
             String query = ("@info(name = 'query1') " +
                     "from inputStream " +
