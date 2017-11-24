@@ -49,7 +49,7 @@
         <log4j.version>1.2.17.wso2v1</log4j.version>
         <testng.version>6.8</testng.version>
         <netty.verion>4.1.7.Final</netty.verion>
-        <siddhi.map.binary.version>1.0.6</siddhi.map.binary.version>
+        <siddhi.map.binary.version>1.0.7</siddhi.map.binary.version>
         <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
         <mavan.checkstyle.suppression.file>checkstyle-suppressions.xml</mavan.checkstyle.suppression.file>
         <jacoco.version>0.7.9</jacoco.version>
