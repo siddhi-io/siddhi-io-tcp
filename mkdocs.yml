@@ -15,6 +15,7 @@ google_analytics:
 pages:
 - Welcome to WSO2 Siddhi IO TCP: index.md
 - API Docs:
+  - 2.0.12: api/2.0.12.md
   - 2.0.11: api/2.0.11.md
   - 2.0.10: api/2.0.10.md
   - 2.0.9: api/2.0.9.md
