@@ -44,7 +44,7 @@ import java.util.Map;
         name = "tcp",
         namespace = "source",
         description = "A Siddhi application can be configured to receive events via the TCP transport by adding " +
-                "the @Source(type = ‘tcp’) annotation at the top of an event stream definition.\n" +
+                "the @Source(type = 'tcp') annotation at the top of an event stream definition.\n" +
                 "\n" +
                 "When this is defined the associated stream will receive events from the TCP transport on " +
                 "the host and port defined in the system.",
@@ -104,7 +104,7 @@ import java.util.Map;
         examples = {
                 @Example(
                         syntax = "" +
-                                "@Source(type = ‘tcp’, context=’abc’, @map(type='binary'))\n" +
+                                "@Source(type = 'tcp', context='abc', @map(type='binary'))\n" +
                                 "define stream Foo (attribute1 string, attribute2 int );",
                         description = "" +
                                 "Under this configuration, events are received via the TCP transport on default host," +

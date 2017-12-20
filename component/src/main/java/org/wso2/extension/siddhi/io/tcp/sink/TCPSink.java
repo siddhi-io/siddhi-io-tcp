@@ -50,7 +50,7 @@ import java.util.Map;
         namespace = "sink",
         description = "" +
                 "A Siddhi application can be configured to publish events via the TCP transport by " +
-                "adding the @Sink(type = ‘tcp’) annotation at the top of an event stream definition.",
+                "adding the @Sink(type = 'tcp') annotation at the top of an event stream definition.",
         parameters = {
                 @Parameter(
                         name = "url",
@@ -100,7 +100,7 @@ import java.util.Map;
         },
         examples = {
                 @Example(
-                        syntax = "@Sink(type = ‘tcp’, url='tcp://localhost:8080/abc’, sync='true' \n" +
+                        syntax = "@Sink(type = 'tcp', url='tcp://localhost:8080/abc', sync='true' \n" +
                                 "   @map(type='binary'))\n" +
                                 "define stream Foo (attribute1 string, attribute2 int);",
                         description = "" +
