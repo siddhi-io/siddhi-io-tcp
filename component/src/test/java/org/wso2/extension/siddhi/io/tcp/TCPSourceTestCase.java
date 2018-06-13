@@ -19,10 +19,13 @@
 package org.wso2.extension.siddhi.io.tcp;
 
 import org.apache.log4j.Logger;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.extension.siddhi.io.tcp.transport.TCPNettyClient;
+import org.wso2.extension.siddhi.io.tcp.utils.LoggerAppender;
+import org.wso2.extension.siddhi.io.tcp.utils.LoggerCallBack;
 import org.wso2.extension.siddhi.map.binary.sinkmapper.BinaryEventConverter;
 import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 import org.wso2.siddhi.core.SiddhiAppRuntime;
@@ -49,6 +52,7 @@ public class TCPSourceTestCase {
     static final Logger LOG = Logger.getLogger(TCPSourceTestCase.class);
     private volatile int count;
     private volatile boolean eventArrived;
+    private boolean isLogEventArrived;
 
     @BeforeMethod
     public void init() {
@@ -460,8 +464,10 @@ public class TCPSourceTestCase {
 
     }
 
-    @Test(expectedExceptions = SiddhiAppCreationException.class)
+    @Test
     public void testTcpSource8() throws InterruptedException {
+        String regexPattern = "Error starting Siddhi App 'foo'";
+
         SiddhiAppRuntime siddhiAppRuntime = null;
         try {
             LOG.info("tcpSource TestCase 8");
@@ -477,8 +483,19 @@ public class TCPSourceTestCase {
                     "select *  " +
                     "insert into outputStream;");
             siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition + query);
-
+            LoggerCallBack loggerCallBack = new LoggerCallBack(regexPattern) {
+                @Override
+                public void receive(String logEventMessage) {
+                    isLogEventArrived = true;
+                }
+            };
+            LoggerAppender.setLoggerCallBack(loggerCallBack);
             siddhiAppRuntime.start();
+            Thread.sleep(1000);
+            Assert.assertEquals(isLogEventArrived, true,
+                    "Matching log event not found for pattern: '" + regexPattern + "'");
+            LoggerAppender.setLoggerCallBack(null);
+
         } finally {
             if (siddhiAppRuntime != null) {
                 siddhiAppRuntime.shutdown();
