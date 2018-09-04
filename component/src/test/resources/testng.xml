@@ -20,7 +20,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="Tcp-IO-Test-Suite">
-    <test name="tcp-tests" enabled="true" preserve-order="true">
+    <test name="tcp-tests" enabled="true" preserve-order="true" parallel="false">
         <classes>
             <class name="org.wso2.extension.siddhi.io.tcp.TCPSinkTestCase"/>
             <class name="org.wso2.extension.siddhi.io.tcp.TCPSourceTestCase"/>
