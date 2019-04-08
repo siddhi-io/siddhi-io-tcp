@@ -27,10 +27,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.siddhi.core.exception.ConnectionUnavailableException;
 import org.apache.log4j.Logger;
 import org.wso2.extension.siddhi.io.tcp.transport.handlers.MessageEncoder;
 import org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite;
-import org.wso2.siddhi.core.exception.ConnectionUnavailableException;
 
 import java.util.UUID;
 
