@@ -130,7 +130,6 @@ public class TCPSink extends Sink {
     private Option syncOption;
     private Boolean sync = null;
     private String hostAndPort;
-    private ServiceDeploymentInfo serviceDeploymentInfo;
 
     @Override
     protected StateFactory init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
@@ -166,7 +165,6 @@ public class TCPSink extends Sink {
         int workerThreads = Integer.parseInt(optionHolder.validateAndGetStaticValue(WORKER_THREADS,
                 DEFAULT_WORKER_THREADS));
         tcpNettyClient = new TCPNettyClient(workerThreads, keepAlive, tcpNoDelay);
-        serviceDeploymentInfo = new ServiceDeploymentInfo(port, false);
         return null;
     }
 
@@ -177,7 +175,7 @@ public class TCPSink extends Sink {
 
     @Override
     protected ServiceDeploymentInfo exposeServiceDeploymentInfo() {
-        return serviceDeploymentInfo;
+        return null;
     }
 
     @Override
