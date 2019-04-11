@@ -174,7 +174,7 @@ public class TCPSink extends Sink {
     }
 
     @Override
-    protected ServiceDeploymentInfo exposedServiceDeploymentInfo() {
+    protected ServiceDeploymentInfo exposeServiceDeploymentInfo() {
         return null;
     }
 
