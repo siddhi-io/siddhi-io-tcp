@@ -17,9 +17,8 @@
  */
 package org.wso2.extension.siddhi.io.tcp.transport.utils;
 
-
+import io.siddhi.core.exception.SiddhiAppCreationException;
 import org.wso2.extension.siddhi.io.tcp.transport.callback.StreamListener;
-import org.wso2.siddhi.core.exception.SiddhiAppCreationException;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
