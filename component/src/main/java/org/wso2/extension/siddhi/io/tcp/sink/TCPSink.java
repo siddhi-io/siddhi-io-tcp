@@ -27,8 +27,11 @@ import io.siddhi.annotation.util.DataType;
 import io.siddhi.core.config.SiddhiAppContext;
 import io.siddhi.core.exception.ConnectionUnavailableException;
 import io.siddhi.core.exception.SiddhiAppCreationException;
+import io.siddhi.core.stream.ServiceDeploymentInfo;
 import io.siddhi.core.stream.output.sink.Sink;
 import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.snapshot.state.State;
+import io.siddhi.core.util.snapshot.state.StateFactory;
 import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.Option;
 import io.siddhi.core.util.transport.OptionHolder;
@@ -129,8 +132,8 @@ public class TCPSink extends Sink {
     private String hostAndPort;
 
     @Override
-    protected void init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
-                        ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
+    protected StateFactory init(StreamDefinition outputStreamDefinition, OptionHolder optionHolder,
+                                ConfigReader sinkConfigReader, SiddhiAppContext siddhiAppContext) {
         String url = optionHolder.validateAndGetStaticValue(URL);
         syncOption = optionHolder.getOrCreateOption(SYNC, "false");
         if (syncOption.isStatic()) {
@@ -162,12 +165,17 @@ public class TCPSink extends Sink {
         int workerThreads = Integer.parseInt(optionHolder.validateAndGetStaticValue(WORKER_THREADS,
                 DEFAULT_WORKER_THREADS));
         tcpNettyClient = new TCPNettyClient(workerThreads, keepAlive, tcpNoDelay);
-
+        return null;
     }
 
     @Override
     public Class[] getSupportedInputEventClasses() {
         return new Class[]{String.class, byte[].class, ByteBuffer.class};
+    }
+
+    @Override
+    protected ServiceDeploymentInfo exposedServiceDeploymentInfo() {
+        return null;
     }
 
     @Override
@@ -184,7 +192,8 @@ public class TCPSink extends Sink {
     }
 
     @Override
-    public void publish(Object payload, DynamicOptions dynamicOptions) throws ConnectionUnavailableException {
+    public void publish(Object payload, DynamicOptions dynamicOptions, State state)
+            throws ConnectionUnavailableException {
         try {
             byte[] message;
             if (payload instanceof String) {
