@@ -25,7 +25,7 @@
         <version>5</version>
     </parent>
 
-    <groupId>org.wso2.extension.siddhi.io.tcp</groupId>
+    <groupId>io.siddhi.extension.io.tcp</groupId>
     <artifactId>siddhi-io-tcp-parent</artifactId>
     <version>3.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>

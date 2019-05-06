@@ -19,11 +19,11 @@
 
 <FindBugsFilter>
     <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.utils.FlowController"/>
+        <Class name="io.siddhi.extension.io.tcp.transport.utils.FlowController"/>
         <Bug pattern="WA_AWAIT_NOT_IN_LOOP"/>
     </Match>
     <Match>
-        <Class name="org.wso2.extension.siddhi.io.tcp.transport.utils.EventComposite"/>
+        <Class name="io.siddhi.extension.io.tcp.transport.utils.EventComposite"/>
         <Bug pattern="EI_EXPOSE_REP, EI_EXPOSE_REP2"/>
     </Match>
 </FindBugsFilter>
