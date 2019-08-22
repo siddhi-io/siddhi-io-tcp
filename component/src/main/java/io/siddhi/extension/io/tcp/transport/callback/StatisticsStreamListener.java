@@ -19,11 +19,11 @@
 package io.siddhi.extension.io.tcp.transport.callback;
 
 import io.siddhi.core.event.Event;
+import io.siddhi.extension.map.binary.sourcemapper.SiddhiEventConverter;
+import io.siddhi.extension.map.binary.utils.EventDefinitionConverterUtil;
 import io.siddhi.query.api.definition.Attribute;
 import io.siddhi.query.api.definition.StreamDefinition;
 import org.apache.log4j.Logger;
-import org.wso2.extension.siddhi.map.binary.sourcemapper.SiddhiEventConverter;
-import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
