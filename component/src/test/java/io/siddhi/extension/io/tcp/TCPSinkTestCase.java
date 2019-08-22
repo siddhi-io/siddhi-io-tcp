@@ -26,6 +26,8 @@ import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.extension.io.tcp.transport.TCPNettyServer;
 import io.siddhi.extension.io.tcp.transport.callback.StreamListener;
 import io.siddhi.extension.io.tcp.transport.config.ServerConfig;
+import io.siddhi.extension.map.binary.sourcemapper.SiddhiEventConverter;
+import io.siddhi.extension.map.binary.utils.EventDefinitionConverterUtil;
 import io.siddhi.query.api.definition.Attribute;
 import io.siddhi.query.api.definition.StreamDefinition;
 import io.siddhi.query.api.exception.SiddhiAppValidationException;
@@ -33,8 +35,6 @@ import org.apache.log4j.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.wso2.extension.siddhi.map.binary.sourcemapper.SiddhiEventConverter;
-import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

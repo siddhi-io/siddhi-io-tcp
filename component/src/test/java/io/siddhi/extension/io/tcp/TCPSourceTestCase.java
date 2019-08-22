@@ -30,14 +30,14 @@ import io.siddhi.core.util.EventPrinter;
 import io.siddhi.extension.io.tcp.transport.TCPNettyClient;
 import io.siddhi.extension.io.tcp.utils.LoggerAppender;
 import io.siddhi.extension.io.tcp.utils.LoggerCallBack;
+import io.siddhi.extension.map.binary.sinkmapper.BinaryEventConverter;
+import io.siddhi.extension.map.binary.utils.EventDefinitionConverterUtil;
 import io.siddhi.query.api.definition.Attribute;
 import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.wso2.extension.siddhi.map.binary.sinkmapper.BinaryEventConverter;
-import org.wso2.extension.siddhi.map.binary.utils.EventDefinitionConverterUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
