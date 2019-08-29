@@ -19,12 +19,12 @@ For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and i
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-tcp/api/3.0.2">3.0.2</a>.
+Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-tcp/api/3.0.3">3.0.3</a>.
 
 ## Features
 
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-tcp/api/3.0.2/#tcp-sink">tcp</a> *<a target="_blank" href="https://siddhi.io/en/v5.0/docs/query-guide/#sink">(Sink)</a>*<br><div style="padding-left: 1em;"><p>A Siddhi application can be configured to publish events via the TCP transport by adding the @Sink(type = 'tcp') annotation at the top of an event stream definition.</p></div>
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-tcp/api/3.0.2/#tcp-source">tcp</a> *<a target="_blank" href="https://siddhi.io/en/v5.0/docs/query-guide/#source">(Source)</a>*<br><div style="padding-left: 1em;"><p>A Siddhi application can be configured to receive events via the TCP transport by adding the @Source(type = 'tcp') annotation at the top of an event stream definition.<br><br>When this is defined the associated stream will receive events from the TCP transport on the host and port defined in the system.</p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-tcp/api/3.0.3/#tcp-sink">tcp</a> *(<a target="_blank" href="http://siddhi.io/en/v5.0/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p>A Siddhi application can be configured to publish events via the TCP transport by adding the @Sink(type = 'tcp') annotation at the top of an event stream definition.</p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-tcp/api/3.0.3/#tcp-source">tcp</a> *(<a target="_blank" href="http://siddhi.io/en/v5.0/docs/query-guide/#source">Source</a>)*<br> <div style="padding-left: 1em;"><p>A Siddhi application can be configured to receive events via the TCP transport by adding the @Source(type = 'tcp') annotation at the top of an event stream definition.<br><br>When this is defined the associated stream will receive events from the TCP transport on the host and port defined in the system.</p></div>
 
 ## Dependencies 
 
