@@ -29,12 +29,12 @@ import io.siddhi.core.stream.output.StreamCallback;
 import io.siddhi.core.util.EventPrinter;
 import io.siddhi.extension.io.tcp.transport.TCPNettyClient;
 import io.siddhi.extension.io.tcp.utils.LoggerAppender;
-import io.siddhi.extension.io.tcp.utils.LoggerCallBack;
 import io.siddhi.extension.map.binary.sinkmapper.BinaryEventConverter;
 import io.siddhi.extension.map.binary.utils.EventDefinitionConverterUtil;
 import io.siddhi.query.api.definition.Attribute;
-import org.apache.log4j.Logger;
-import org.testng.Assert;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -49,7 +49,7 @@ import java.util.List;
  */
 
 public class TCPSourceTestCase {
-    static final Logger LOG = Logger.getLogger(TCPSourceTestCase.class);
+    static final Logger LOG = (Logger) LogManager.getLogger(TCPSourceTestCase.class);
     private volatile int count;
     private volatile boolean eventArrived;
     private boolean isLogEventArrived;
@@ -473,6 +473,12 @@ public class TCPSourceTestCase {
             LOG.info("tcpSource TestCase 8");
             SiddhiManager siddhiManager = new SiddhiManager();
 
+            LoggerAppender appender = new LoggerAppender("LoggerAppender", null);
+            final Logger logger = (Logger) LogManager.getRootLogger();
+            logger.setLevel(Level.ALL);
+            logger.addAppender(appender);
+            appender.start();
+
             String inStreamDefinition = "" +
                     "@app:name('foo')" +
                     "@source(type='tcp', @map(type='binary'))" +
@@ -483,18 +489,11 @@ public class TCPSourceTestCase {
                     "select *  " +
                     "insert into outputStream;");
             siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(inStreamDefinition + query);
-            LoggerCallBack loggerCallBack = new LoggerCallBack(regexPattern) {
-                @Override
-                public void receive(String logEventMessage) {
-                    isLogEventArrived = true;
-                }
-            };
-            LoggerAppender.setLoggerCallBack(loggerCallBack);
             siddhiAppRuntime.start();
             Thread.sleep(1000);
-            Assert.assertEquals(isLogEventArrived, true,
-                    "Matching log event not found for pattern: '" + regexPattern + "'");
-            LoggerAppender.setLoggerCallBack(null);
+            AssertJUnit.assertTrue(((LoggerAppender) logger.getAppenders().
+                    get("LoggerAppender")).getMessages().contains(regexPattern));
+            logger.removeAppender(appender);
 
         } finally {
             if (siddhiAppRuntime != null) {

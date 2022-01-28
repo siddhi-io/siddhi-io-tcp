@@ -31,13 +31,14 @@ import io.siddhi.extension.io.tcp.transport.config.ServerConfig;
 import io.siddhi.extension.io.tcp.transport.handlers.MessageDecoder;
 import io.siddhi.extension.io.tcp.transport.utils.FlowController;
 import io.siddhi.extension.io.tcp.transport.utils.StreamListenerHolder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * TCP Netty Server.
  */
 public class TCPNettyServer {
-    private static final Logger log = Logger.getLogger(TCPNettyServer.class);
+    private static final Logger log = LogManager.getLogger(TCPNettyServer.class);
     private ServerBootstrap bootstrap;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;

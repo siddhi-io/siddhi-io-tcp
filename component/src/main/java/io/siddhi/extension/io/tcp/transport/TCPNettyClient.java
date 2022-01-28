@@ -30,7 +30,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.siddhi.core.exception.ConnectionUnavailableException;
 import io.siddhi.extension.io.tcp.transport.handlers.MessageEncoder;
 import io.siddhi.extension.io.tcp.transport.utils.EventComposite;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
@@ -38,7 +39,7 @@ import java.util.UUID;
  * Tcp Netty Client.
  */
 public class TCPNettyClient {
-    private static final Logger log = Logger.getLogger(TCPNettyClient.class);
+    private static final Logger log = LogManager.getLogger(TCPNettyClient.class);
 
     private EventLoopGroup group;
     private Bootstrap bootstrap;

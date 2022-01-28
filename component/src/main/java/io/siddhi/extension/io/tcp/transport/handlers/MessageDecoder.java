@@ -25,7 +25,8 @@ import io.siddhi.extension.io.tcp.transport.callback.StreamListener;
 import io.siddhi.extension.io.tcp.transport.utils.BinaryMessageConverterUtil;
 import io.siddhi.extension.io.tcp.transport.utils.FlowController;
 import io.siddhi.extension.io.tcp.transport.utils.StreamListenerHolder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.List;
  * Byte to message decoder.
  */
 public class MessageDecoder extends ByteToMessageDecoder {
-    static final Logger LOG = Logger.getLogger(MessageDecoder.class);
+    private static final Logger LOG = LogManager.getLogger(MessageDecoder.class);
     private StreamListenerHolder streamInfoHolder;
     private FlowController flowController;
 

@@ -18,7 +18,8 @@
 
 package io.siddhi.extension.io.tcp.transport.callback;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Stream Listener to log the messages.
  */
 public class LogStreamListener implements StreamListener {
-    private static final Logger log = Logger.getLogger(LogStreamListener.class);
+    private static final Logger log = LogManager.getLogger(LogStreamListener.class);
     private AtomicLong count = new AtomicLong(0);
     private String channelId;
 

@@ -21,6 +21,7 @@ package io.siddhi.extension.io.tcp;
 import io.siddhi.core.SiddhiAppRuntime;
 import io.siddhi.core.SiddhiManager;
 import io.siddhi.core.event.Event;
+import io.siddhi.core.exception.MappingFailedException;
 import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.extension.io.tcp.transport.TCPNettyServer;
@@ -31,7 +32,8 @@ import io.siddhi.extension.map.binary.utils.EventDefinitionConverterUtil;
 import io.siddhi.query.api.definition.Attribute;
 import io.siddhi.query.api.definition.StreamDefinition;
 import io.siddhi.query.api.exception.SiddhiAppValidationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,7 +46,7 @@ import java.util.ArrayList;
  * TCP sink test case.
  */
 public class TCPSinkTestCase {
-    static final Logger LOG = Logger.getLogger(TCPSinkTestCase.class);
+    static final Logger LOG = LogManager.getLogger(TCPSinkTestCase.class);
     private volatile int count;
     private volatile int count1;
     private volatile boolean eventArrived;
@@ -90,7 +92,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
@@ -196,7 +203,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
@@ -432,7 +444,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
@@ -537,7 +554,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types1));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types1));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
@@ -574,7 +596,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types2));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types2));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
@@ -668,7 +695,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
@@ -751,7 +783,12 @@ public class TCPSinkTestCase {
 
             @Override
             public void onMessage(byte[] message) {
-                onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+
+                try {
+                    onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+                } catch (MappingFailedException e) {
+                    LOG.error ("Mapping error occurred. " + e.getMessage(), e);
+                }
             }
 
             public void onEvents(Event[] events) {
