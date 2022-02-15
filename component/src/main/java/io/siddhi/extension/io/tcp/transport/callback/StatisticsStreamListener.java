@@ -19,11 +19,13 @@
 package io.siddhi.extension.io.tcp.transport.callback;
 
 import io.siddhi.core.event.Event;
+import io.siddhi.core.exception.MappingFailedException;
 import io.siddhi.extension.map.binary.sourcemapper.SiddhiEventConverter;
 import io.siddhi.extension.map.binary.utils.EventDefinitionConverterUtil;
 import io.siddhi.query.api.definition.Attribute;
 import io.siddhi.query.api.definition.StreamDefinition;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -38,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Stream Listener to gather statistics.
  */
 public class StatisticsStreamListener implements StreamListener {
-    private static final Logger log = Logger.getLogger(StatisticsStreamListener.class);
+    private static final Logger log = LogManager.getLogger(StatisticsStreamListener.class);
     private AtomicLong totalDelay = new AtomicLong(0);
     private AtomicLong lastIndex = new AtomicLong(0);
     private AtomicLong lastCounter = new AtomicLong(0);
@@ -66,7 +68,12 @@ public class StatisticsStreamListener implements StreamListener {
 
     @Override
     public void onMessage(byte[] message) {
-        onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+
+        try {
+            onEvents(SiddhiEventConverter.toConvertToSiddhiEvents(ByteBuffer.wrap(message), types));
+        } catch (MappingFailedException e) {
+            log.error("Mapping error occurred. " + e.getMessage(), e);
+        }
     }
 
     private void onEvents(Event[] events) {
@@ -133,9 +140,11 @@ public class StatisticsStreamListener implements StreamListener {
         } catch (UnsupportedEncodingException e) {
             log.error("File writing encoding is wrong, found '" + StandardCharsets.UTF_8.name() + "'");
         }
+        if (writer != null) {
+            writer.println(data);
+            writer.flush();
+        }
 
-        writer.println(data);
-        writer.flush();
     }
 
 }

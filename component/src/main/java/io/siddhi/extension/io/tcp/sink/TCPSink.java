@@ -37,7 +37,8 @@ import io.siddhi.core.util.transport.Option;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.tcp.transport.TCPNettyClient;
 import io.siddhi.query.api.definition.StreamDefinition;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -122,7 +123,7 @@ public class TCPSink extends Sink {
     private static final String DEFAULT_WORKER_THREADS = "0";
     private static final String URL = "url";
     private static final String SYNC = "sync";
-    private static final Logger log = Logger.getLogger(TCPSink.class);
+    private static final Logger log = LogManager.getLogger(TCPSink.class);
     private TCPNettyClient tcpNettyClient;
     private String host;
     private int port;
